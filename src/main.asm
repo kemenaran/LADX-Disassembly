@@ -707,7 +707,12 @@ skipScrollY::
     ld   a, [hl]     
     ld   hl, hBaseScrollX ; a = hBaseScrollX + [hl]
     add  a, [hl]
+IF !DEBUG_DIFFERENTIAL_SCROLLING_ENABLED
+    nop
+    nop
+ELSE
     ld   [rSCX], a        ; set scrollX
+ENDC
     ld   a, [WR1_GameplaySubtype] 
     cp   $06  ; if GameplaySubtype < 6 (intro sea)
     jr   c, setupNextInterruptForIntroSea
@@ -741,7 +746,12 @@ skipResetSectionIndex::
     cp   $04           ; if SectionIndex != 4
     jr   nz, restoreSavedWRAMBankAndReturn ; skip
     ; If we are drawing the last section (4)
+IF !DEBUG_INTRO_HORIZON_COMPENSATION_ENABLED
+    ld   a, $FF
+    nop
+ELSE
     ld   a, [WR0_IntroBGYOffset] ; Apply the Y offset to compensate for sea vertical movement
+ENDC
     ld   [rSCY], a               ; (so that the horizon position stays constant).
     cpl                ; a = $FF - a + $61
     inc  a             ;
@@ -4341,7 +4351,11 @@ label_1B0D::
     cp   GAMEPLAY_INTRO
     jr   nz, .continue1
     ; GameplayType == INTRO
-    ld   a, [$D601]  
+if !DEBUG_ANIMATE_INTRO_TILES
+    jp   .returnEarly
+ELSE
+    ld   a, [$D601]
+ENDC
     and  a                ; if $D601 != 0   
     jp   nz, .returnEarly ;   return immediatly
     ld   a, [hFrameCounter]  

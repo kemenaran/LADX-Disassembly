@@ -7749,7 +7749,11 @@ label_7447::
     ret
 
 RenderRain::
+if !DEBUG_INTRO_SFX_ENABLED
+    ret
+ELSE
     call GetRandomByte
+ENDC
     and  $18
     add  a, $10
     ld   [$FFD8], a
@@ -7816,7 +7820,11 @@ label_74CF::
     ret
 
 RenderIntroEntities::
+IF !DEBUG_INTRO_ENTITIES_ENABLED
+    ret
+ELSE
     xor  a
+ENDC
     ld   [$C3C0], a
     ld   c, $02  ; Entities count
     ld   b, $00
