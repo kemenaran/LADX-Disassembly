@@ -15,6 +15,11 @@ include "code/interrupts.asm"
 include "code/header.asm"
 
 ; Sources
+
+; Enable Debug Mode on rom, uncomment to enable
+section "EnableDebug", rom0[$0003]
+    db 01
+
 section "Main", rom0[$0150]
 include "code/bank0.asm"
 
@@ -73,6 +78,9 @@ incbin "gfx/items/items_2.dmg.2bpp"
 
 section "bank19",romx[$4000],bank[$13]
 incbin "gfx/ending/ending.dmg.2bpp"
+
+section "bank32",romx[$4000],bank[$20]
+include "code/bank32.asm"
 
 section "bank41",romx[$4000],bank[$29]
 incbin "gfx/photos/photo_nice_link.2bpp"

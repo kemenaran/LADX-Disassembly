@@ -2945,8 +2945,8 @@ ItemFunction::
     cp   $0B
     jp   z, UseShovel
     cp   $07 ; Magic wand
-    jr   nz, label_12ED
-    ld   hl, $C137
+    jr   nz, label_12ED ; Jump to use boots?
+    ld   hl, $C137 ; Start of magic wand use
     ld   a, [$C19B]
     or   [hl]
     jr   nz, label_12ED
