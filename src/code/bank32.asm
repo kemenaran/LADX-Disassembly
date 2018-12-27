@@ -5385,9 +5385,7 @@ jr_020_5940::
 jr_020_5969::
     ret ; Returns to 0346 (Render Palettes)
 
-    ; Palette Data ?
-    ; 596A
-   
+; Palette Data ?
 data_596A::
     db $9C, $AA, $81, $06, $06, $9C, $AC, $81
     db $06, $06, $9C, $AE, $81, $06, $06, $9C
@@ -5395,19 +5393,22 @@ data_596A::
     db $06, $9C, $71, $81, $03, $03, $00, $9C
     db $AC, $81, $04, $04, $9C, $AE, $81, $03
     db $03, $00
-    ; Sprite Data ?
-    ; Start of data copied for dungeon inventory building
-    ; 5994
+; Sprite Data ?
+; Start of data copied for inventory display
+data_5994::
     db $9C, $6A, $83, $94, $95, $C0, $C1, $9C
     db $6C, $83, $A0, $A1, $C2, $C3, $9C, $6E
     db $83, $9A, $9B, $C4, $C5, $9C, $6F, $81
     db $9C, $9D, $9C, $B0, $81, $C6, $C7, $9C
     db $71, $81, $9E, $9F, $9C, $B2, $81, $CA
     db $CB, $9C, $92, $01, $7F, $7F, $9C, $D3
-    db $00, $7F, $00, $03, $0A, $11, $22, $05
+    db $00, $7F, $00
+; Location for overwriting each inventory sprite
+data_59c7::
+    db $03, $0A, $11, $22, $05
     db $0C, $13, $1D, $27
 
-; Start building display of dungeon inventory
+; Start building display of inventory
 ; Called from jp hl in 00:28CE (TABLEJUMP)
 ; Copies 51 bytes from 5994 (above) to wRequestDestination (D601)
     ld hl, wRequestDestinationHigh
@@ -5423,7 +5424,7 @@ jr_020_59d8::
 
     ldh a, [hIsGBC]
     and a
-    jr z, jr_020_5a23
+    jr z, InventoryDisplayEntryPoint
 
 ; GBC Exclusive code
 ; Load 32 bytes from 596a into DC91
@@ -5440,9 +5441,9 @@ jr_020_59eb::
 
     ld a, $1e
     ld [$dc90], a
-    ld a, [wActiveRoom]
+    ld a, [wActiveRoom] ; Check if in dungeon, jump to InventoryDisplayEntryPoint if not
     and a
-    jr z, jr_020_5a23
+    jr z, InventoryDisplayEntryPoint
 
 ; Jump ahead if hMapTileset is FF (special)
     ldh a, [hMapTileset]
@@ -5451,7 +5452,7 @@ jr_020_59eb::
 
 ; Jump ahead if hMapTileset is greater than 0A
     cp $0a
-    jr nc, jr_020_5a23
+    jr nc, InventoryDisplayEntryPoint
 
 ; Set BC and E to point to the end of the "Palette Data?" (12 bytes) above
 jr_020_5a06::
@@ -5476,33 +5477,37 @@ jr_020_5a15::
     ld [$dc90], a
 
 ; Palette loading complete, start building inventory
-jr_020_5a23::
+InventoryDisplayEntryPoint::
     ld de, wHasFlippers
     ld bc, $0000
 
-jr_020_5a29::
+InventoryDisplayLoop::
     ld a, c
     cp $02
     jr nz, jr_020_5a34
-; Always Skipped
+
+; Only executed for Trade Sequence Item
     ld a, [$db7f]
     and a
-    jr nz, jr_020_5a57
+    jr nz, OverwriteInventoryDisplaySprite
 
 jr_020_5a34::
     ld a, c
     cp $04
     jr nz, jr_020_5a4f
-; Always Skipped
+
+; Only executed for unlabeled DB10
     ld de, wHasTailKey
     ld a, [wActiveRoom]
     and a
     jr z, jr_020_5a4f
 
+; Jump ahead if hMapTileset is FF (special)
     ldh a, [hMapTileset]
     cp $ff
     jr z, jr_020_5a4c
 
+; Jump ahead if hMapTileset is greater than 0A
     cp $0a
     jr nc, jr_020_5a4f
 
@@ -5510,45 +5515,55 @@ jr_020_5a4c::
     ld de, wHasDungeonMap
 
 jr_020_5a4f::
+    ; Load current inventory display item memory
     ld a, [de]
     cp $ff
-    jr z, jr_020_5a57
+    jr z, OverwriteInventoryDisplaySprite
 
     and a
-    jr nz, jr_020_5a75
+    jr nz, IncrementInventoryDisplay
 
-jr_020_5a57::
+OverwriteInventoryDisplaySprite::
+    ; Push current inventory item to stack
     push de
+
     ld hl, $59c7
     add hl, bc
     ld e, [hl]
     ld d, $00
     ld hl, wRequestDestinationHigh
     add hl, de
+
+    ; Write $7f over sprite data
     ld a, $7f
     ld [hl+], a
     ld [hl+], a
+
     ld a, c
     cp $02
     jr nz, jr_020_5a74
 
+    ; Only executed for Trade sequence item
     ld de, $0005
     add hl, de
     ld a, $7f
     ld [hl+], a
     ld [hl], a
 
+; Reload item mem location to de
 jr_020_5a74::
     pop de
 
-; We have flippers
-jr_020_5a75::
+; Increment inventory memory pointer to display next item
+IncrementInventoryDisplay::
     inc de
     inc c
+
     ld a, c
     cp $09
-    jr nz, jr_020_5a29
+    jr nz, InventoryDisplayLoop
 
+    ; Inventory display 0 - 8 now complete (hasFlippers to hasBirdKey)
     ld hl, wRequestDestinationHigh
     ld de, $002c
     add hl, de
@@ -5556,6 +5571,7 @@ jr_020_5a75::
     and a
     jr z, jr_020_5a97
 
+    ; Offset seashell count sprites to reflect seashell count in inventory
     ld e, a
     swap a
     and $0f
