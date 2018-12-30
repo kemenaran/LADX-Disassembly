@@ -32,6 +32,12 @@ include "code/bank2.asm"
 section "bank3",romx[$4000],bank[$03]
 include "code/bank3.asm"
 
+section "bank5",romx[$4000],bank[$05]
+include "code/bank5.asm"
+
+section "bank7",romx[$4000],bank[$07]
+include "code/bank7.asm"
+
 section "bank12",romx[$4000],bank[$0C]
 incbin "gfx/characters/link_1.dmg.2bpp"
 incbin "gfx/items/items_1.dmg.2bpp"

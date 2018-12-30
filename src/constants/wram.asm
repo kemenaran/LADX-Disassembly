@@ -493,6 +493,13 @@ wD712 equ $D712
 ; Values:
 ;   0:     not discovered yet
 ;   non-0: various statuses
+
+; On overworld, tracks which
+; owl messages (and chests?)
+; have been received (opened)
+; 80 = Not Received
+; A0 = Received
+; 90 = Opened
 wMinimapTiles:: ; D800
   ds $ff
 

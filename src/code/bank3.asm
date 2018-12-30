@@ -3651,6 +3651,7 @@ label_DFC2::
     call label_3C77
     jp   label_E0AA
 
+; Data for loading secret seashell when bush is clipped (and when dug from ground) (at least first 2 bytes)
 data_DFD1::
     db $9E, $14, $FA, $4E, $DB, $FE, 2, $D2, $8D, $3F, $F0, $F8, $E6, $10, $C2, $8D
     db $3F, $F0, $F6, $FE, $E3, $20, 7, $F0, $F8, $E6, $40, $CA, $8D, $3F
@@ -4363,7 +4364,7 @@ label_E468::
 ; Item ID stored in [d] is added to the first open inventory slot
 AddItemToInventory::
     ld   hl, wAButtonSlot
-    ld   e, $0C
+    ld   e, INVENTORY_SLOT_COUNT
 
 ; Search through inventory for a matching item ID
 label_E477::
