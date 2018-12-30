@@ -163,8 +163,8 @@ data_C826::     db 2, 6, 1, 3, 3, 3, $D, 8, $A, 2, 7, $B, 0, 4, 0, 8
 
 label_C85B::
     call label_3A0A
-    ldh  a, [$FFF6]
-    ld   hl, $C3E0
+    ldh a, [hMapIndex]
+    ld hl, $c3e0
     add  hl, bc
     ld   [hl], a
     ld   hl, $C460
@@ -233,7 +233,8 @@ label_C8C7::
     ldh  a, [$FFEB]
     cp   $5F
     jr   nz, label_C8F0
-    ldh  a, [$FFF6]
+
+    ldh a, [hMapIndex]
     cp   $95
     jr   z, label_C8F0
     cp   $92
@@ -253,7 +254,7 @@ label_C8E2::
     jr   z, label_C8AD
 
 label_C8F0::
-    ld   a, [$DBA5]
+    ld a, [wActiveRoom]
     and  a
     jr   z, label_C908
     ld   a, [$D478]
@@ -278,7 +279,7 @@ label_C90B::
     ld   [$C165], a
 
 label_C918::
-    ld   hl, $C280
+    ld hl, wEntitiesTypeTable
     add  hl, bc
     ld   [hl], $05
     ld   a, $03
@@ -297,7 +298,9 @@ label_C926::
     add  hl, de
     ld   a, [hl]
     jp   label_3B0C
-    ld   hl, $C210
+
+
+    ld hl, wEntitiesPosYTable
     add  hl, bc
     ld   a, [hl]
     sub  a, $03
@@ -306,13 +309,16 @@ label_C926::
     call label_C00
     ld   [hl], $30
     ret
-    ldh  a, [$FFF6]
+
+
+    ldh a, [hMapIndex]
     cp   $65
     ret  nz
     ldh  a, [$FFEC]
     cp   $50
     ret  c
-    ld   hl, $C2B0
+
+    ld hl, wEntitiesUnknownTableB
     add  hl, bc
     inc  [hl]
     ret
@@ -320,8 +326,10 @@ label_C926::
     add  hl, bc
     ld   [hl], $02
     ret
-    ld   hl, $DB74
-    ld   a, [$DB73]
+
+
+    ld hl, $db74
+    ld a, [wIsMarinFollowingLink]
     or   [hl]
     jp   nz, label_3F8D
     ret
@@ -338,10 +346,12 @@ label_C926::
     jp   label_3B0C
     ld   a, $33
     jr   label_C995
-    ld   a, [$DB15]
+
+    ld a, [wGoldenLeavesCount]
     cp   $06
     jr   c, label_C993
-    ld   hl, $C200
+
+    ld hl, wEntity0PosX
     add  hl, bc
     ld   [hl], $58
     ld   hl, $C380
@@ -353,16 +363,16 @@ label_C993::
 
 label_C995::
     ld   e, a
-    ld   a, [$DB4E]
+    ld a, [wDidFindSword]
     and  a
     ret  z
     ld   a, e
 
 label_C99C::
-    ld   [$D368], a
-    ldh  [$FFB0], a
-    ldh  [$FFBD], a
-    ldh  [$FFBF], a
+    ld [wWorldMusicTrack], a
+    ldh [$b0], a
+    ldh [$bd], a
+    ldh [$bf], a
     ret
     xor  a
     ld   [$D219], a
@@ -372,8 +382,8 @@ label_C99C::
     ld   a, $3A
     jr   label_C99C
     xor  a
-    ld   [$C168], a
-    ld   hl, $C210
+    ld [$C168], a
+    ld hl, wEntitiesPosYTable
     add  hl, bc
     ld   a, [hl]
     sub  a, $04
@@ -387,12 +397,14 @@ label_C99C::
     add  a, $10
     ld   [hl], a
     ret
-    ld   hl, $C210
+
+
+    ld hl, wEntitiesPosYTable
     add  hl, bc
     ld   a, [hl]
     add  a, $0A
     ld   [hl], a
-    ld   hl, $C2C0
+    ld hl, wEntitiesUnknownTableC
     add  hl, bc
     ld   [hl], a
     ret
@@ -434,8 +446,10 @@ label_CA12::
     call IsEntityFrameCounterZero
     ld   [hl], $20
     ret
-    ldh  a, [$FFF6]
-    cp   $D9
+
+
+    ldh a, [hMapIndex]
+    cp $d9
     ld   a, $32
     jr   nz, label_CA32
     ld   a, $37
@@ -448,8 +462,9 @@ label_CA32::
     ld   a, [$DBA5]
     and  a
     jr   z, label_CA46
-    ldh  a, [$FFF7]
-    cp   $FF
+
+    ldh a, [hMapTileset]
+    cp $ff
     jr   z, label_CA4D
 
 label_CA46::
@@ -462,19 +477,22 @@ label_CA4D::
 
 label_CA4F::
     call label_C995
-    ld   de, $C220
-    ld   hl, $C200
+    ld de, $c220
+    ld hl, wEntity0PosX
     jp   label_CF92
-    ldh  a, [$FFF6]
-    cp   $E2
+
+
+    ldh a, [hMapIndex]
+    cp $e2
     jr   nz, label_CA6B
-    ld   a, [$DB56]
+
+    ld a, [wIsBowWowFollowingLink]
     cp   $80
     jr   z, label_CA72
     jp   label_3F8D
 
 label_CA6B::
-    ld   a, [$DB56]
+    ld a, [wIsBowWowFollowingLink]
     and  a
     jp   nz, label_3F8D
 
@@ -489,13 +507,16 @@ label_CA7A::
     and  $10
     jp   nz, label_3F8D
     ret
-    ldh  a, [$FFF6]
-    cp   $C0
+
+
+    ldh a, [hMapIndex]
+    cp $c0
     jr   c, label_CAA3
     ld   a, [$DB74]
     and  a
     jp   z, label_3F8D
-    ld   a, [$DB73]
+
+    ld a, [wIsMarinFollowingLink]
     and  a
     jp   nz, label_3F8D
     inc  a
@@ -516,9 +537,10 @@ label_CAA3::
     ld   a, [$DB50]
     and  a
     jr   nz, label_CABF
-    ld   [$DB96], a
+
+    ld [wGameplaySubtype], a
     ld   a, $01
-    ld   [$DB95], a
+    ld [wGameplayType], a
     ret
 
 label_CABF::
@@ -536,19 +558,23 @@ data_CAC6::
     ld   [bc], a
     nop
     nop
-    ldh  a, [$FFFE]
+    ldh a, [hIsGBC]
     and  a
     jr   z, label_CB2F
-    ld   a, [$DBA5]
+
+    ld a, [wActiveRoom]
     and  a
     jr   z, label_CB2F
-    ld   a, [$DB73]
+
+    ld a, [wIsMarinFollowingLink]
     and  a
     jr   nz, label_CB2F
-    ld   a, [$DB67]
+
+    ld a, [wHasInstrument3]
     and  $02
     jr   nz, label_CB2F
-    ld   a, [$DB0E]
+
+    ld a, [wTradeSequenceItem]
     cp   $04
     jr   nc, label_CB2F
     ld   a, [$DB48]
@@ -571,21 +597,26 @@ label_CB01::
     xor  a
     ld   [rSVBK], a
     jr   label_CB2F
-    ld   a, [$DB56]
+
+    ld a, [wIsBowWowFollowingLink]
     cp   $80
     jr   nz, label_CB1A
-    ld   a, $0E
-    ld   [$D368], a
+
+    ld a, $0e
+    ld [wWorldMusicTrack], a
 
 label_CB1A::
     ret
-    ld   a, [$DBA5]
+
+
+    ld a, [wActiveRoom]
     and  a
     jr   nz, label_CB2F
     ld   a, [$D477]
     and  a
     ret  nz
-    ld   hl, $C210
+
+    ld hl, wEntitiesPosYTable
     add  hl, bc
     ld   a, [hl]
     sub  a, $10
@@ -596,7 +627,7 @@ label_CB2F::
     ld   hl, $C380
     add  hl, bc
     ld   [hl], $03
-    ld   a, [$DB44]
+    ld a, [wShieldLevel]
     and  a
     jr   nz, label_CB40
     ld   a, $1C
@@ -626,16 +657,21 @@ label_CB56::
     ret
     ld   a, $FF
     jp   label_3B0C
-    ld   a, [$DBA5]
+
+
+    ld a, [wActiveRoom]
     and  a
     jr   z, label_CB56
-    ldh  a, [$FFF6]
-    cp   $DA
+
+    ldh a, [hMapIndex]
+    cp $da
     jr   nz, label_CB56
-    ld   a, [$DB0E]
-    cp   $0E
+
+    ld a, [wTradeSequenceItem]
+    cp $0e
     jp   nz, label_3F8D
-    ld   a, [$DC0D]
+
+    ld a, [wPhotos2]
     and  $01
     jr   z, label_CB56
     ld   a, $03
@@ -644,8 +680,8 @@ label_CB56::
     jr   label_CB51
 
 label_CB84::
-    ld   hl, $DDE0
-    ldh  a, [$FFF6]
+    ld hl, $dde0
+    ldh a, [hMapIndex]
     ld   e, a
     ld   d, $00
     add  hl, de
@@ -666,14 +702,16 @@ label_CB84::
     jr   z, label_CBB3
 
 label_CBAD::
-    ld   hl, $C290
+    ld hl, wEntitiesWalkingTable
     add  hl, bc
     ld   [hl], $80
 
 label_CBB3::
     ld   a, $08
     jp   label_3B0C
-    ld   hl, $C290
+
+
+    ld hl, wEntitiesWalkingTable
     add  hl, bc
     ld   [hl], $03
     jr   label_CBC2
@@ -687,46 +725,55 @@ label_CBC2::
     ld   hl, $C360
     add  hl, bc
     ld   [hl], $10
-    ld   hl, $C200
+    ld hl, wEntity0PosX
     add  hl, bc
     ld   a, [hl]
     sub  a, $08
     ld   [hl], a
     jp   label_CB56
-    ld   hl, $C200
+
+
+    ld hl, wEntity0PosX
     add  hl, bc
     ld   [hl], $50
-    ld   hl, $C2D0
+    ld hl, wEntitiesUnknownTableD
     add  hl, bc
     ld   [hl], $00
     jp   label_CB56
-    ldh  a, [$FFFE]
+
+
+    ldh a, [hIsGBC]
     and  a
     jp   z, label_CB56
     call label_CB84
     and  $10
     jp   z, label_CB56
-    ld   hl, $C200
+
+    ld hl, wEntity0PosX
     add  hl, bc
     ld   a, $3C
     jr   label_CC15
-    ldh  a, [$FFFE]
+
+    ldh a, [hIsGBC]
     and  a
     jp   z, label_CB56
     call label_CB84
     and  $10
     jp   z, label_CB56
-    ld   hl, $C200
+
+    ld hl, wEntity0PosX
     add  hl, bc
     ld   a, $63
 
 label_CC15::
     ld   [hl], a
-    ld   hl, $C290
+    ld hl, wEntitiesWalkingTable
     add  hl, bc
     ld   [hl], $04
     jp   label_CB56
-    ld   hl, $C210
+
+
+    ld hl, wEntitiesPosYTable
     add  hl, bc
     ld   a, [hl]
     add  a, $02
@@ -738,10 +785,10 @@ label_CC15::
     add  hl, bc
     ld   [hl], $0C
     xor  a
-    ld   hl, $C2D0
+    ld hl, wEntitiesUnknownTableD
     add  hl, bc
     ld   [hl], a
-    ld   hl, $C200
+    ld hl, wEntity0PosX
     add  hl, bc
     ld   a, [hl]
     add  a, $08
@@ -759,7 +806,8 @@ data_CC44::
     inc  [hl]
     call IsEntityFrameCounterZero
     jr   z, label_CC77
-    ldh  a, [$FFE7]
+
+    ldh a, [hFrameCounter]
     rra
     rra
     rra
@@ -784,8 +832,8 @@ label_CC77::
     jr   nz, label_CC8C
     ld   hl, $C3A0
     add  hl, bc
-    ld   [hl], $1E
-    ld   hl, $C280
+    ld [hl], $1e
+    ld hl, wEntitiesTypeTable
     add  hl, bc
     ld   [hl], $05
     jp   label_C86B
@@ -793,8 +841,8 @@ label_CC77::
 label_CC8C::
     ld   hl, $C480
     add  hl, bc
-    ld   [hl], $1F
-    ld   hl, $C280
+    ld [hl], $1f
+    ld hl, wEntitiesTypeTable
     add  hl, bc
     ld   [hl], $01
     ld   hl, $C340
@@ -816,8 +864,8 @@ data_CCAC::
 data_CCB2::
     ld   e, $01
     ld   e, $61
-    ldh  a, [$FFF7]
-    cp   $FF
+    ldh a, [hMapTileset]
+    cp $ff
     jr   nz, label_CCDC
     ld   hl, $C3A0
     add  hl, bc
@@ -830,11 +878,11 @@ data_CCB2::
     jr   nz, label_CCDC
 
 label_CCCD::
-    ld   hl, $C280
+    ld hl, wEntitiesTypeTable
     add  hl, bc
     ld   a, $05
     ld   [hl], a
-    ld   hl, $C290
+    ld hl, wEntitiesWalkingTable
     add  hl, bc
     ld   a, $06
     ld   [hl], a
@@ -935,26 +983,26 @@ label_CD66::
     ld   hl, data_CCA8
     add  hl, de
     ld   e, [hl]
-    ldh  a, [$FF98]
+    ldh a, [hLinkPositionX]
     push af
     ld   hl, $C4B0
     add  hl, bc
 
 label_CD7A::
     ld   a, [hl]
-    ldh  [$FF98], a
-    ldh  a, [$FF99]
+    ldh [hLinkPositionX], a
+    ldh a, [hLinkPositionY]
     push af
     ld   hl, $C4C0
     add  hl, bc
     ld   a, [hl]
-    ldh  [$FF99], a
+    ldh [hLinkPositionY], a
     ld   a, e
     call label_FEC7
     pop  af
-    ldh  [$FF99], a
+    ldh [hLinkPositionY], a
     pop  af
-    ldh  [$FF98], a
+    ldh [hLinkPositionX], a
     jp   label_FF25
     call label_3A81
     call label_FF7E
@@ -970,7 +1018,8 @@ label_CD7A::
     ldh  a, [$FFEB]
     cp   $5C
     jr   nz, label_CDD2
-    ld   hl, $C2A0
+
+    ld hl, wEntitiesUnknownTableA
     add  hl, bc
     ld   a, [hl]
     and  a
@@ -1005,14 +1054,14 @@ label_CDD2::
     jr   nz, label_CE04
 
 label_CDEF::
-    ld   hl, $C280
+    ld hl, wEntitiesTypeTable
     add  hl, bc
     ld   [hl], $05
     call IncrementEntityWalkingAttr
     ld   [hl], $01
     call IsEntityFrameCounterZero
     ld   [hl], $80
-    ld   hl, $C2D0
+    ld hl, wEntitiesUnknownTableD
     add  hl, bc
     ld   [hl], b
 
@@ -1027,7 +1076,7 @@ data_CE05::
     call label_E0B3
     call label_3D7F
     call label_EE2B
-    ld   a, [$DB00]
+    ld a, [wAButtonSlot]
     cp   $03
     jr   nz, label_CE28
     ldh  a, [$FFCC]
@@ -1036,7 +1085,7 @@ data_CE05::
     jr   label_CE72
 
 label_CE28::
-    ld   a, [$DB01]
+    ld a, [wBButtonSlot]
     cp   $03
     jr   nz, label_CE72
     ldh  a, [$FFCC]
@@ -1062,13 +1111,13 @@ label_CE35::
     rr   e
     jr   nc, label_CE72
     ld   a, $01
-    ld   [$C3CF], a
-    ld   hl, $C280
+    ld [$c3cf], a
+    ld hl, wEntitiesTypeTable
     add  hl, bc
     ld   [hl], $07
     ld   a, $02
-    ldh  [$FFF3], a
-    ld   hl, $C490
+    ldh [hSFX], a
+    ld hl, $c490
     add  hl, bc
     ld   [hl], b
     call IsEntityFrameCounterZero
@@ -1083,7 +1132,8 @@ label_CE72::
     ld   a, [hl]
     and  a
     jr   nz, label_CE85
-    ld   hl, $C280
+
+    ld hl, wEntitiesTypeTable
     add  hl, bc
     ld   [hl], $05
     ld   hl, $C320
@@ -1135,7 +1185,9 @@ data_CEA4::
     add  hl, bc
     ld   [hl], a
     ret
-    ld   hl, $C2C0
+
+
+    ld hl, wEntitiesUnknownTableC
     add  hl, bc
     ld   [hl], $04
     ld   a, $03
@@ -1143,7 +1195,7 @@ data_CEA4::
     ld   a, $FD
 
 label_CED0::
-    ld   hl, $C210
+    ld hl, wEntitiesPosYTable
     add  hl, bc
     add  a, [hl]
     ld   [hl], a
@@ -1171,11 +1223,13 @@ label_CEEC::
     xor  $01
     ld   [hl], a
     ret
-    ld   hl, $C2D0
+
+
+    ld hl, wEntitiesUnknownTableD
     add  hl, bc
     ld   [hl], $02
-    ldh  a, [$FFF6]
-    cp   $A4
+    ldh a, [hMapIndex]
+    cp $a4
     jr   z, label_CF0B
     cp   $D2
     jr   nz, label_CF0F
@@ -1188,13 +1242,14 @@ label_CF0F::
     jp   label_CF24
 
 label_CF12::
-    ld   hl, $C2D0
+    ld hl, wEntitiesUnknownTableD
     add  hl, bc
     ld   [hl], $01
-    ld   a, [$DBA5]
+    ld a, [wActiveRoom]
     and  a
     jr   z, label_CF24
-    ld   hl, $C2D0
+
+    ld hl, wEntitiesUnknownTableD
     add  hl, bc
     ld   [hl], $02
 
@@ -1205,8 +1260,10 @@ label_CF24::
     or   $11
     ld   [hl], a
     ret
-    ldh  a, [$FFF6]
-    cp   $F8
+
+
+    ldh a, [hMapIndex]
+    cp $f8
     jr   nz, label_CF44
     ldh  a, [$FFF8]
     bit  4, a
@@ -1237,26 +1294,30 @@ label_CF54::
 
 label_CF67::
     ret
-    ld   a, [$DB0E]
-    cp   $0E
+
+
+    ld a, [wTradeSequenceItem]
+    cp $0e
     jr   z, label_CF83
     ret
-    ld   a, [$DBA5]
+
+
+    ld a, [wActiveRoom]
     and  a
     ret  z
     call IncrementEntityWalkingAttr
     jr   label_CF83
     call label_CF12
-    ld   a, [$DBA5]
+    ld a, [wActiveRoom]
     and  a
     jr   nz, label_CFA9
 
 label_CF83::
-    ld   de, $C220
-    ld   hl, $C200
+    ld de, $c220
+    ld hl, wEntity0PosX
     call label_CF92
-    ld   de, $C230
-    ld   hl, $C210
+    ld de, $c230
+    ld hl, wEntitiesPosYTable
 
 label_CF92::
     add  hl, bc
@@ -1272,8 +1333,10 @@ label_CF92::
     adc  a, $00
     ld   [hl], a
     ret
-    ld   de, $C220
-    ld   hl, $C200
+
+
+    ld de, $c220
+    ld hl, wEntity0PosX
     jr   label_CF92
 
 label_CFA9::
@@ -1286,7 +1349,8 @@ label_CFA9::
     ldh  a, [$FFEB]
     cp   $12
     jr   nz, label_CFC8
-    ld   hl, $C2D0
+
+    ld hl, wEntitiesUnknownTableD
     add  hl, bc
     ld   [hl], $01
     ld   hl, $C310
@@ -1366,6 +1430,7 @@ data_D04F::
 data_D053::
     db $62, $70, $62, $70
 
+; Item ID mapped to chest ID (IE Chest ID $07 points to item ID $0A (Roc's Feather))
 data_D057:: db 3, 4, 5, 6, 7, 8, 9, $A, $B, $C, 2, 1, 0, 0, 0, 0
             db 1
 
@@ -1388,7 +1453,7 @@ label_D068::
 label_D081::
     ld   b, $A1
     call label_D1C9
-    ld   hl, $C210
+    ld hl, wEntitiesPosYTable
     add  hl, bc
     ld   a, [hl]
     sub  a, $08
@@ -1406,7 +1471,7 @@ label_D081::
     push af
     ld   a, [$C501]
     ld   e, a
-    ld   hl, $C2F0
+    ld hl, wEntitiesUnknowTableF
     add  hl, de
     ld   [hl], $38
     pop  af
@@ -1444,7 +1509,7 @@ label_D0D8::
     sub  a, $16
     ld   e, a
     ld   d, $00
-    ld   hl, $DBCC
+    ld hl, wHasDungeonMap
     add  hl, de
     inc  [hl]
     call label_2802
@@ -1456,41 +1521,47 @@ label_D0EF::
     ldh  a, [$FFE8]
     cp   $01
     jr   nz, label_D0FD
-    ld   hl, $DB44
+
+    ld hl, wShieldLevel
     inc  [hl]
 
+; Called When opening Feather chest with af = $0740, de = $0007, bc = $000F, $FFE8 = 07
 label_D0FD::
     cp   $00
     jr   nz, label_D10C
-    ld   a, [$DB43]
+
+    ld a, [wPowerBraceletLevel]
     cp   $02
     jr   z, label_D10C
-    ld   hl, $DB43
+
+    ld hl, wPowerBraceletLevel
     inc  [hl]
 
 label_D10C::
     ldh  a, [$FFE8]
     cp   $0A
     jr   nz, label_D11A
-    ld   hl, $DB4D
+
+    ld hl, wBombCount
     ld   a, [hl]
     add  a, $01
     daa
     ld   [hl], a
-
+; Opening Chest?
 label_D11A::
     ld   d, b
     ld   hl, data_D057
     add  hl, de
     ld   d, [hl]
-    call label_E472
+    call AddItemToInventory
     jr   label_D12A
 
 label_D125::
-    ld   hl, $DB00
+    ld hl, wAButtonSlot
     add  hl, de
     inc  [hl]
-
+	
+; Remove entity from screen?
 label_D12A::
     call label_D134
     ld   a, [hl]
@@ -1500,13 +1571,13 @@ label_D12A::
     ret
 
 label_D134::
-    ld   a, [$DBA5]
+    ld a, [wActiveRoom]
     ld   d, a
-    ld   hl, $D800
-    ldh  a, [$FFF6]
+    ld hl, wMinimapTiles
+    ldh a, [hMapIndex]
     ld   e, a
-    ldh  a, [$FFF7]
-    cp   $FF
+    ldh a, [hMapTileset]
+    cp $ff
     jr   nz, label_D14B
     ld   d, $00
     ld   hl, $DDE0
@@ -1558,7 +1629,7 @@ label_D16E::
     ld   [hl], a
     call label_D249
     call label_F893
-    ld   hl, $C2A0
+    ld hl, wEntitiesUnknownTableA
     add  hl, bc
     ld   a, [hl]
     and  a
@@ -1569,8 +1640,8 @@ label_D198::
     ld   a, $11
     ldh  [$FFF4], a
     ld   de, data_D166
-    ld   b, $C6
-    ldh  a, [$FFF6]
+    ld b, $c6
+    ldh a, [hMapIndex]
     cp   $77
     jr   nz, label_D1B3
     ld   a, [$DDD9]
@@ -1580,13 +1651,13 @@ label_D198::
     ld   b, $03
 
 label_D1B3::
-    ld   a, [$DBA5]
+    ld a, [wActiveRoom]
     and  a
     jr   z, label_D1C9
     ld   de, data_D15A
-    ld   b, $0D
-    ldh  a, [$FFF6]
-    cp   $C7
+    ld b, $0d
+    ldh a, [hMapIndex]
+    cp $c7
     jr   nz, label_D1C9
     ld   de, data_D156
     ld   b, $BE
@@ -1610,7 +1681,7 @@ label_D1C9::
     or   e
     ld   e, a
     ld   d, $00
-    ld   hl, $D711
+    ld hl, wTileMap
     add  hl, de
     pop  af
     ld   [hl], a
@@ -1620,13 +1691,13 @@ label_D1C9::
 
 label_D1F5::
     call label_2887
-    ld   a, [$D600]
+    ld a, [wRequests]
     ld   e, a
     ld   d, $00
-    ld   hl, $D601
+    ld hl, wRequestDestinationHigh
     add  hl, de
-    add  a, $0A
-    ld   [$D600], a
+    add $0a
+    ld [wRequests], a
     pop  de
     ldh  a, [$FFCF]
     ldi  [hl], a
@@ -1654,7 +1725,7 @@ label_D1F5::
     ldi  [hl], a
     xor  a
     ld   [hl], a
-    ldh  a, [$FFFE]
+    ldh a, [hIsGBC]
     and  a
     jr   z, label_D234
     push bc
@@ -1681,12 +1752,13 @@ data_D245::
     db $7E, 7, $7E, $27
 
 label_D249::
-    ld   a, [$DBA5]
-    ldh  [$FFF1], a
+    ld a, [wActiveRoom]
+    ldh [$f1], a
     ld   de, data_D235
     and  a
     jr   nz, label_D25D
-    ldh  a, [$FFF6]
+
+    ldh a, [hMapIndex]
     cp   $77
     jr   nz, label_D25D
     ld   de, data_D245
@@ -1703,10 +1775,11 @@ label_D25D::
     ld   [$C144], a
 
 label_D276::
-    ldh  a, [$FFF6]
-    cp   $C7
+    ldh a, [hMapIndex]
+    cp $c7
     jr   z, label_D282
-    ld   a, [$DBA5]
+
+    ld a, [wActiveRoom]
     and  a
     jr   nz, label_D286
 
@@ -1726,7 +1799,7 @@ label_D286::
     add  hl, bc
     ld   [hl], a
     call label_F893
-    ld   hl, $C280
+    ld hl, wEntitiesTypeTable
     add  hl, bc
     ld   a, [hl]
     and  a
@@ -1735,8 +1808,8 @@ label_D286::
     ret  z
     call label_3F8D
     ld   de, data_D162
-    ld   b, $C4
-    ld   a, [$DBA5]
+    ld b, $c4
+    ld a, [wActiveRoom]
     and  a
     jr   z, label_D2B5
     ld   de, data_D15E
@@ -1765,7 +1838,7 @@ label_D2D4::
     ld   d, b
 
 label_D2D7::
-    ld   hl, $C280
+    ld hl, wEntitiesTypeTable
     add  hl, de
     ld   a, [hl]
     cp   $05
@@ -1775,14 +1848,16 @@ label_D2D7::
     ld   a, [hl]
     and  $40
     jr   nz, label_D31E
-    ld   hl, $C200
+
+    ld hl, wEntity0PosX
     add  hl, de
     ldh  a, [$FFEE]
     sub  a, [hl]
     add  a, $0C
     cp   $18
     jr   nc, label_D31E
-    ld   hl, $C210
+
+    ld hl, wEntitiesPosYTable
     add  hl, de
     ld   a, [hl]
     ld   hl, $C310
@@ -1832,12 +1907,13 @@ label_D31E::
     ld   a, $2F
     call label_E4CA
     jr   c, label_D369
-    ldh  a, [$FFD7]
-    ld   hl, $C200
+
+    ldh a, [$d7]
+    ld hl, wEntity0PosX
     add  hl, de
     ld   [hl], a
-    ldh  a, [$FFD8]
-    ld   hl, $C210
+    ldh a, [$d8]
+    ld hl, wEntitiesPosYTable
     add  hl, de
     ld   [hl], a
     ldh  a, [$FFDA]
@@ -1852,14 +1928,15 @@ label_D369::
     ldh  a, [$FFF1]
     and  a
     jr   nz, label_D392
-    ldh  a, [$FFF7]
-    cp   $1E
+
+    ldh a, [hMapTileset]
+    cp $1e
     jr   z, label_D378
     cp   $10
     jr   nz, label_D392
 
 label_D378::
-    ld   a, [$DB73]
+    ld a, [wIsMarinFollowingLink]
     and  a
     jr   z, label_D392
     call GetRandomByte
@@ -1905,7 +1982,7 @@ label_D3B6::
     ld   [$C19E], a
     call label_F5A2
     call label_E0B3
-    ld   hl, $C280
+    ld hl, wEntitiesTypeTable
     add  hl, bc
     ld   a, [hl]
     cp   $02
@@ -1915,7 +1992,8 @@ label_D3B6::
     ld   a, [hl]
     and  a
     jr   z, label_D3E4
-    ld   hl, $C2A0
+
+    ld hl, wEntitiesUnknownTableA
     add  hl, bc
     ld   a, [hl]
     and  a
@@ -1935,7 +2013,7 @@ label_D3E4::
     ld   e, $0F
 
 label_D3F9::
-    ld   hl, $C2F0
+    ld hl, wEntitiesUnknowTableF
     add  hl, bc
     ld   [hl], e
     ld   hl, $C340
@@ -2067,15 +2145,15 @@ label_D56F::
     jr   nz, label_D599
     ld   hl, $C480
     add  hl, bc
-    ld   [hl], $1F
-    ld   a, [$DC0F]
+    ld [hl], $1f
+    ld a, [wTunicType]
     and  a
     jr   nz, label_D594
     ld   a, [wActivePowerUp]
     cp   $01
     jr   nz, label_D594
     ld   a, $12
-    ldh  [$FFF3], a
+    ldh [hSFX], a
 
 label_D594::
     ld   hl, $FFF4
@@ -2100,7 +2178,8 @@ label_DC5F::
     ldh  a, [$FFEB]
     cp   $23
     jr   nz, label_D5E2
-    ld   hl, $C2B0
+
+    ld hl, wEntitiesUnknownTableB
     add  hl, bc
     ld   a, [hl]
     and  a
@@ -2155,7 +2234,7 @@ label_D60F::
     ld   d, $28
 
 label_D62E::
-    ld   hl, $D415
+    ld hl, wKillCount
     inc  [hl]
     ld   a, [hl]
     cp   d
@@ -2199,24 +2278,25 @@ label_D655::
 label_D670::
     call label_E4CA
     ret  c
-    ld   hl, $C2B0
+
+    ld hl, wEntitiesUnknownTableB
     add  hl, bc
     ld   a, [hl]
-    ld   hl, $C2B0
+    ld hl, wEntitiesUnknownTableB
     add  hl, de
     ld   [hl], a
-    ldh  a, [$FFD7]
-    ld   hl, $C200
+    ldh a, [$d7]
+    ld hl, wEntity0PosX
     add  hl, de
     ld   [hl], a
-    ldh  a, [$FFD8]
-    ld   hl, $C210
+    ldh a, [$d8]
+    ld hl, wEntitiesPosYTable
     add  hl, de
     ld   [hl], a
     ld   hl, $C450
     add  hl, de
     ld   [hl], $80
-    ld   hl, $C2F0
+    ld hl, wEntitiesUnknowTableF
     add  hl, de
     ld   [hl], $18
     ld   hl, $C480
@@ -2240,7 +2320,8 @@ label_D670::
 label_D6B8::
     cp   $3C
     jr   nz, label_D6D1
-    ldh  a, [$FFF6]
+
+    ldh a, [hMapIndex]
     cp   $58
     jr   z, label_D6C6
     cp   $5A
@@ -2329,10 +2410,12 @@ label_D748::
     ldh  a, [$FFEB]
     cp   $02
     jr   z, label_D77F
-    ld   a, [$DB43]
+
+    ld a, [wPowerBraceletLevel]
     cp   $02
     jr   nc, label_D77F
-    ld   a, [$DC0F]
+
+    ld a, [wTunicType]
     and  $01
     jr   nz, label_D77F
     ld   a, [wActivePowerUp]
@@ -2345,7 +2428,7 @@ label_D77F::
 label_D782::
     add  hl, de
     ld   a, [hl]
-    ld   hl, $C2E0
+    ld hl, wEntitiesFrameCounterTable
     add  hl, bc
     ld   [hl], a
 
@@ -2373,19 +2456,19 @@ label_D795::
     ld   hl, data_D701
     add  hl, de
     ld   a, [hl]
-    ld   hl, $FF98
-    add  a, [hl]
-    ld   hl, $C200
+    ld hl, hLinkPositionX
+    add [hl]
+    ld hl, wEntity0PosX
     add  hl, bc
     ld   [hl], a
     ld   hl, data_D711
     add  hl, de
     ld   a, [hl]
-    ld   hl, $FF99
-    add  a, [hl]
-    ld   hl, $C13B
-    add  a, [hl]
-    ld   hl, $C210
+    ld hl, hLinkPositionY
+    add [hl]
+    ld hl, $c13b
+    add [hl]
+    ld hl, wEntitiesPosYTable
     add  hl, bc
     ld   [hl], a
     ldh  a, [$FFF9]
@@ -2417,7 +2500,7 @@ label_D7E6::
 
 label_D7E9::
     ld   de, data_D7FB
-    ld   a, [$DB95]
+    ld a, [wGameplayType]
     cp   $01
     jr   z, label_D7F7
     ld   a, $30
@@ -2450,10 +2533,11 @@ data_D823::
     ld   b, $04
     ld   [bc], a
     nop
-    ldh  a, [$FFF7]
+    ldh a, [hMapTileset]
     cp   $15
     jr   nz, label_D835
-    ld   a, [$DB56]
+
+    ld a, [wIsBowWowFollowingLink]
     cp   $80
     jp   nz, label_3F8D
 
@@ -2472,7 +2556,8 @@ label_D83C::
 label_D847::
     and  a
     jr   z, label_D858
-    ld   hl, $C290
+
+    ld hl, wEntitiesWalkingTable
     add  hl, bc
     ld   a, $01
     ld   [hl], a
@@ -2510,7 +2595,7 @@ label_D889::
     ret
 
 label_D88D::
-    ld   a, [$DB95]
+    ld a, [wGameplayType]
     cp   $01
     ret  z
     jp   label_D998
@@ -2520,10 +2605,10 @@ label_D896::
     and  $1F
     or   $20
     ld   [hl], a
-    ld   hl, $C290
+    ld hl, wEntitiesWalkingTable
     add  hl, bc
     ld   [hl], $00
-    ld   hl, $C2B0
+    ld hl, wEntitiesUnknownTableB
     add  hl, bc
     ld   a, [hl]
     inc  a
@@ -2559,7 +2644,7 @@ label_D8B9::
     ret
 
 label_D8D7::
-    ld   hl, $C2A0
+    ld hl, wEntitiesUnknownTableA
     add  hl, bc
     ld   a, [hl]
     and  $0F
@@ -2572,7 +2657,7 @@ label_D8E5::
     and  $0F
     or   $10
     ld   [hl], a
-    ld   hl, $C290
+    ld hl, wEntitiesWalkingTable
     add  hl, bc
     ld   [hl], $01
     call label_3D7F
@@ -2658,16 +2743,16 @@ label_D947::
     ld   c, a
     ld   hl, data_D937
     add  hl, bc
-    ldh  a, [$FFD7]
-    add  a, [hl]
-    ld   hl, $C200
+    ldh a, [$d7]
+    add [hl]
+    ld hl, wEntity0PosX
     add  hl, de
     ld   [hl], a
     ld   hl, data_D93B
     add  hl, bc
-    ldh  a, [$FFD8]
-    add  a, [hl]
-    ld   hl, $C210
+    ldh a, [$d8]
+    add [hl]
+    ld hl, wEntitiesPosYTable
     add  hl, de
     ld   [hl], a
     ld   hl, data_D93F
@@ -2722,16 +2807,16 @@ label_D998::
     ld   c, a
     ld   hl, data_D98C
     add  hl, bc
-    ldh  a, [$FFD7]
-    add  a, [hl]
-    ld   hl, $C200
+    ldh a, [$d7]
+    add [hl]
+    ld hl, wEntity0PosX
     add  hl, de
     ld   [hl], a
     ld   hl, data_D98E
     add  hl, bc
-    ldh  a, [$FFD8]
-    add  a, [hl]
-    ld   hl, $C210
+    ldh a, [$d8]
+    add [hl]
+    ld hl, wEntitiesPosYTable
     add  hl, de
     ld   [hl], a
     ld   hl, data_D992
@@ -2765,8 +2850,8 @@ data_D9D8::
     dec  a
     jr   nz, label_DA17
     ld   a, $18
-    ld   [$D368], a
-    ld   hl, $DB5B
+    ld [wWorldMusicTrack], a
+    ld hl, $db5b
     inc  [hl]
     ld   hl, wSubstractRupeeBufferLow
     ld   [hl], $FF
@@ -2774,9 +2859,9 @@ data_D9D8::
     ld   a, [hl]
     or   $20
     ld   [hl], a
-    ldh  [$FFF8], a
-    ldh  a, [$FFF7]
-    ld   hl, $DA2E
+    ldh [hFFF8], a
+    ldh a, [hMapTileset]
+    ld hl, $da2e
     cp   $06
     jr   z, label_DA12
     cp   $03
@@ -2790,12 +2875,12 @@ label_DA14::
     jp   label_3F8D
 
 label_DA17::
-    ldh  a, [$FF98]
-    ld   hl, $C200
+    ldh a, [hLinkPositionX]
+    ld hl, wEntity0PosX
     add  hl, bc
     ld   [hl], a
-    ldh  a, [$FF99]
-    ld   hl, $C210
+    ldh a, [hLinkPositionY]
+    ld hl, wEntitiesPosYTable
     add  hl, bc
     sub  a, $0C
     ld   [hl], a
@@ -2803,16 +2888,16 @@ label_DA17::
     ld   hl, $C310
     add  hl, bc
     ld   [hl], a
-    ld   a, $6C
-    ldh  [$FF9D], a
+    ld a, $6c
+    ldh [hLinkAnimationState], a
     ld   a, $03
     ldh  [$FF9E], a
     xor  a
-    ld   [$C137], a
-    ld   [$C16A], a
-    ld   [$C122], a
-    ld   [$C121], a
-    ld   hl, $C470
+    ld [$c137], a
+    ld [wC16A], a
+    ld [$c122], a
+    ld [wIsUsingSpinAttack], a
+    ld hl, $c470
     add  hl, bc
     ld   [hl], a
     ld   a, $02
@@ -2853,10 +2938,10 @@ data_DA4D::
     ld   [$C167], a
     jp   IncrementEntityWalkingAttr
     ld   a, $03
-    ldh  [$FF90], a
+    ldh [hNeedsUpdatingBGTiles], a
     jp   IncrementEntityWalkingAttr
     ld   a, $04
-    ldh  [$FF90], a
+    ldh [hNeedsUpdatingBGTiles], a
     jp   IncrementEntityWalkingAttr
     ld   a, $4F
     call label_2385
@@ -2888,7 +2973,7 @@ label_DABA::
     xor  a
     ld   [$C1AB], a
     call label_DB2B
-    ld   a, [$C19F]
+    ld a, [wDialogState]
     and  a
     ret  nz
     ld   a, [$DB5C]
@@ -2910,14 +2995,14 @@ label_DAED::
     call label_DA17
     ld   de, data_DA4D
     call label_3BC0
-    ld   a, [$C19F]
+    ld a, [wDialogState]
     and  a
     ret  nz
     ld   a, $05
-    ldh  [$FF90], a
+    ldh [hNeedsUpdatingBGTiles], a
     jp   IncrementEntityWalkingAttr
     ld   a, $06
-    ldh  [$FF90], a
+    ldh [hNeedsUpdatingBGTiles], a
     call label_3F8D
     ld   a, $0D
     ldh  [$FFA5], a
@@ -2948,13 +3033,15 @@ data_DB17::
     ldi  [hl], a
 
 label_DB2B::
-    ld   a, [$C19F]
+    ld a, [wDialogState]
     and  a
     ret  z
-    ld   a, [$C170]
+
+    ld a, [wDialogCharacterIndex]
     cp   $21
     ret  nc
-    ld   a, [$C19F]
+
+    ld a, [wDialogState]
     and  $80
     ld   a, $23
     jr   z, label_DB41
@@ -2992,7 +3079,7 @@ data_DB6B::
 label_DB6D::
     ld   de, data_DB65
     call label_3BC0
-    ldh  a, [$FFE7]
+    ldh a, [hFrameCounter]
     rra
     rra
     rra
@@ -3014,7 +3101,7 @@ data_DB97::
 
 label_DB99::
     ld   de, data_DB95
-    ld   a, [$DB4E]
+    ld a, [wDidFindSword]
     and  a
     jr   nz, label_DBAC
     ldh  a, [$FFF8]
@@ -3044,7 +3131,7 @@ label_DBCB::
     dec  a
     jr   nz, label_DBE1
     ld   a, $31
-    ld   [$D368], a
+    ld [wWorldMusicTrack], a
     ld   a, $05
     ldh  [$FFB0], a
     ldh  [$FFBF], a
@@ -3062,7 +3149,7 @@ label_DBE1::
     call IsEntityFrameCounterZero
     ld   [hl], $20
     ld   a, $20
-    ld   [$C121], a
+    ld [wIsUsingSpinAttack], a
     ld   a, $03
     ldh  [$FFF4], a
     jp   IncrementEntityWalkingAttr
@@ -3073,20 +3160,20 @@ label_DBE1::
     call label_3B0C
     jp   IncrementEntityWalkingAttr
     call label_DA17
-    ld   a, $6B
-    ldh  [$FF9D], a
-    ld   hl, $C200
+    ld a, $6b
+    ldh [hLinkAnimationState], a
+    ld hl, wEntity0PosX
     add  hl, bc
-    ldh  a, [$FF98]
-    sub  a, $04
+    ldh a, [hLinkPositionX]
+    sub $04
     ld   [hl], a
     call IsEntityFrameCounterZero
     jr   nz, label_DC37
     ld   [$C167], a
     ld   d, $01
-    call label_E472
+    call AddItemToInventory
     ld   a, $01
-    ld   [$DB4E], a
+    ld   [wDidFindSword], a
     call label_D12A
     jp   label_3F8D
 
@@ -3124,7 +3211,7 @@ label_DC67::
     dec  a
     jr   nz, label_DC75
     ld   d, $06
-    call label_E472
+    call AddItemToInventory
     call label_D12A
     jp   label_3F8D
 
@@ -3147,7 +3234,7 @@ label_DC89::
     ret
 
 label_DC99::
-    ldh  a, [$FFF6]
+    ldh a, [hMapIndex]
     cp   $80
     jp   z, label_DC49
     ld   de, data_DC78
@@ -3169,7 +3256,7 @@ label_DC99::
     dec  a
     ld   e, a
     ld   d, b
-    ld   hl, $DB11
+    ld hl, wHasTailKey
     add  hl, de
     ld   [hl], $01
     call label_D12A
@@ -3197,11 +3284,12 @@ label_DCE7::
     jp   label_E0B3
 
 label_DCEA::
-    ld   a, [$DBA5]
+    ld a, [wActiveRoom]
     and  a
     jr   nz, label_DD34
-    ldh  a, [$FFF6]
-    cp   $CE
+
+    ldh a, [hMapIndex]
+    cp $ce
     jr   nz, label_DD34
     ldh  a, [$FFEF]
     sub  a, $48
@@ -3218,7 +3306,8 @@ label_DCEA::
     ld   a, [hl]
     and  a
     jr   nz, label_DD34
-    ld   hl, $C280
+
+    ld hl, wEntitiesTypeTable
     add  hl, bc
     ld   a, [hl]
     cp   $05
@@ -3276,7 +3365,7 @@ label_DD6C::
     ld   a, $0A
     ldh  [$FFA5], a
     ld   d, $0C
-    call label_E472
+    call AddItemToInventory
     ld   a, $01
     ld   [$DB4B], a
     jp   label_3F8D
@@ -3303,7 +3392,7 @@ label_DE09::
     ld   e, [hl]
     ld   e, $5E
     ld   a, $80
-    ld   [$DB56], a
+    ld [wIsBowWowFollowingLink], a
     ret
 
 label_DE12::
@@ -3316,7 +3405,7 @@ label_DE18::
 
 label_DE19::
     ld   a, $02
-    ld   [$DB79], a
+    ld [wIsGhostFollowingLink], a
     ret
 
 label_DE1F::
@@ -3326,18 +3415,20 @@ label_DE1F::
 
 label_DE24::
     xor  a
-    ld   [$DB7B], a
+    ld [wIsRoosterFollowingLink], a
     ret
 
 label_DE29::
     cp   $50
     jr   nc, label_DE8A
-    ld   hl, $C2C0
+
+    ld hl, wEntitiesUnknownTableC
     add  hl, bc
     ld   a, [hl]
     cp   $19
     jr   nc, label_DE8A
-    ldh  a, [$FFE7]
+
+    ldh a, [hFrameCounter]
     and  $07
     jr   nz, label_DE5B
     ld   a, [hl]
@@ -3353,22 +3444,22 @@ label_DE45::
     jr   nz, label_DE5B
     ld   a, $9F
     call label_E4CA
-    ld   hl, $C2B0
+    ld hl, wEntitiesUnknownTableB
     add  hl, de
     ld   [hl], $01
-    ld   hl, $C2E0
+    ld hl, wEntitiesFrameCounterTable
     add  hl, de
     ld   [hl], $60
 
 label_DE5B::
-    ldh  a, [$FFE7]
+    ldh a, [hFrameCounter]
     and  $03
-    ld   hl, $C2C0
+    ld hl, wEntitiesUnknownTableC
     add  hl, bc
     add  a, [hl]
     ld   e, a
     ld   d, b
-    ldh  a, [$FFFE]
+    ldh a, [hIsGBC]
     and  a
     jr   z, label_DE76
     push bc
@@ -3383,13 +3474,13 @@ label_DE76::
     ld   hl, data_DD9F
     add  hl, de
     ld   a, [hl]
-    ld   [$DB97], a
+    ld [wBGPalette], a
     ld   hl, data_DDBC
     add  hl, de
     ld   a, [hl]
-    ld   [$DB98], a
+    ld [wOBJ0Palette], a
     xor  a
-    ld   [$DB99], a
+    ld [wOBJ1Palette], a
 
 label_DE8A::
     ret
@@ -3405,7 +3496,8 @@ label_DEAE::
     ldh  a, [$FFF8]
     and  $10
     jp   nz, label_3F8D
-    ldh  a, [$FFF7]
+
+    ldh a, [hMapTileset]
     and  $03
     ldh  [$FFF1], a
     call label_394D
@@ -3429,13 +3521,13 @@ label_DEAE::
     jr   nz, label_DEFE
     dec  [hl]
     call IncrementEntityWalkingAttr
-    ldh  a, [$FFF7]
-    add  a, $00
+    ldh a, [hMapTileset]
+    add $00
     call label_2373
-    ldh  a, [$FFF7]
+    ldh a, [hMapTileset]
     ld   e, a
     ld   d, b
-    ld   hl, $DB65
+    ld hl, wHasInstrument1
     add  hl, de
     ld   a, [hl]
     or   $02
@@ -3476,14 +3568,14 @@ label_DF33::
     call label_E4CA
     ldh  a, [$FFD7]
     dec  a
-    ld   hl, $C200
+    ld hl, wEntity0PosX
     add  hl, de
     ld   [hl], a
-    ldh  a, [$FFD8]
-    ld   hl, $C210
+    ldh a, [$d8]
+    ld hl, wEntitiesPosYTable
     add  hl, de
     ld   [hl], a
-    ld   hl, $C2B0
+    ld hl, wEntitiesUnknownTableB
     add  hl, de
     ld   [hl], $02
     ld   hl, $C450
@@ -3492,7 +3584,7 @@ label_DF33::
     jp   IncrementEntityWalkingAttr
 
 label_DF5F::
-    ld   hl, $C2D0
+    ld hl, wEntitiesUnknownTableD
     add  hl, bc
     dec  [hl]
     ld   a, [hl]
@@ -3508,16 +3600,16 @@ label_DF5F::
     ld   a, $39
     call label_E4CA
     push bc
-    ld   hl, $C2B0
+    ld hl, wEntitiesUnknownTableB
     add  hl, de
     inc  [hl]
     ldh  a, [$FFE8]
     ld   c, a
     ld   hl, data_DF2F
     add  hl, bc
-    ldh  a, [$FFD7]
-    add  a, [hl]
-    ld   hl, $C200
+    ldh a, [$d7]
+    add [hl]
+    ld hl, wEntity0PosX
     add  hl, de
     ld   [hl], a
     ld   hl, data_DF31
@@ -3526,15 +3618,15 @@ label_DF5F::
     ld   hl, $C240
     add  hl, de
     ld   [hl], a
-    ldh  a, [$FFD8]
-    ld   hl, $C210
+    ldh a, [$d8]
+    ld hl, wEntitiesPosYTable
     add  hl, de
     add  a, $F8
     ld   [hl], a
     ld   hl, $C250
     add  hl, de
-    ld   [hl], $FD
-    ld   hl, $C2E0
+    ld [hl], $fd
+    ld hl, wEntitiesFrameCounterTable
     add  hl, de
     ld   [hl], $38
     call GetRandomByte
@@ -3582,23 +3674,24 @@ label_E001::
     cp   $10
     jr   nz, label_E04C
     dec  [hl]
-    ld   a, [$DBA5]
+    ld a, [wActiveRoom]
     and  a
     jr   nz, label_E029
-    ldh  a, [$FFF6]
-    cp   $C6
+
+    ldh a, [hMapIndex]
+    cp $c6
     jr   nz, label_E029
     ld   a, $05
-    ld   [$DB15], a
+    ld [wGoldenLeavesCount], a
 
 label_E029::
-    ld   hl, $DB15
+    ld hl, wGoldenLeavesCount
     call label_E373
     call label_D12A
     ld   hl, $FFF8
     res  4, [hl]
-    ld   e, $A2
-    ld   a, [$DB15]
+    ld e, $a2
+    ld a, [wGoldenLeavesCount]
     cp   $06
     jr   z, label_E047
     ld   e, $E8
@@ -3626,8 +3719,9 @@ label_E055::
     db   $DB
     and  a
     jr   z, label_E063
-    ldh  a, [$FFF7]
-    cp   $FF
+
+    ldh a, [hMapTileset]
+    cp $ff
     jr   z, label_E06A
 
 label_E063::
@@ -3683,12 +3777,14 @@ label_E0B3::
     ldh  a, [$FFF9]
     and  a
     jr   z, label_E0E3
-    ld   hl, $C2A0
+
+    ld hl, wEntitiesUnknownTableA
     add  hl, bc
     ld   a, [hl]
     and  $08
     jp   z, label_E156
-    ld   hl, $C210
+
+    ld hl, wEntitiesPosYTable
     add  hl, bc
     ld   a, [hl]
     and  $F0
@@ -3749,7 +3845,8 @@ label_E112::
 label_E120::
     cp   $02
     jr   nz, label_E134
-    ld   hl, $C280
+
+    ld hl, wEntitiesTypeTable
     add  hl, bc
     ld   a, [hl]
     and  a
@@ -3783,12 +3880,9 @@ label_E143::
     ld   hl, $C250
     add  hl, bc
     ld   a, [hl]
-    db $CB
-
-label_E14F::
-    cpl
-    cp   $FF
-    jr   nz, label_E155
+    sra a
+    cp $ff
+    jr nz, label_E155
     xor  a
 
 label_E155::
@@ -3838,7 +3932,7 @@ label_E1BB::
     jp   label_FEC7
 
 label_E1C0::
-    ldh  a, [$FFE7]
+    ldh a, [hFrameCounter]
     and  $03
     jr   nz, label_E1DD
     ld   hl, $C310
@@ -3864,12 +3958,13 @@ label_E1DD::
     ret
 
 label_E1DE::
-    ld   hl, $C2D0
+    ld hl, wEntitiesUnknownTableD
     add  hl, bc
     ld   a, [hl]
     and  a
     jp   z, label_E29D
-    ld   a, [$C124]
+
+    ld a, [wMapSlideTransitionState]
     and  a
     jp   nz, label_E29C
     ld   a, [hl]
@@ -3878,7 +3973,8 @@ label_E1DE::
     ldh  a, [$FFEB]
     cp   $3D
     jr   z, label_E200
-    ld   a, [$DBA5]
+
+    ld a, [wActiveRoom]
     and  a
     jp   nz, label_E29C
 
@@ -3889,8 +3985,9 @@ label_E200::
     jr   z, label_E227
     cp   $3D
     jr   nz, label_E22F
-    ldh  a, [$FFF6]
-    cp   $DA
+
+    ldh a, [hMapIndex]
+    cp $da
     jr   z, label_E22F
     cp   $A5
     jr   z, label_E22F
@@ -3948,7 +4045,7 @@ label_E243::
     jr   nc, label_E29C
 
 label_E26B::
-    ld   hl, $C2D0
+    ld hl, wEntitiesUnknownTableD
     add  hl, bc
     ld   [hl], b
     ld   hl, $C440
@@ -3996,7 +4093,7 @@ label_E2AF::
     dec  a
     ld   e, a
     ld   d, b
-    ld   hl, $C280
+    ld hl, wEntitiesTypeTable
     add  hl, de
     ld   a, [hl]
     and  a
@@ -4010,16 +4107,16 @@ label_E2AF::
     jr   nz, label_E311
 
 label_E2D0::
-    ld   hl, $C200
+    ld hl, wEntity0PosX
     add  hl, de
     ld   a, [hl]
-    ld   hl, $C200
+    ld hl, wEntity0PosX
     add  hl, bc
     ld   [hl], a
-    ld   hl, $C210
+    ld hl, wEntitiesPosYTable
     add  hl, de
     ld   a, [hl]
-    ld   hl, $C210
+    ld hl, wEntitiesPosYTable
     add  hl, bc
     ld   [hl], a
     xor  a
@@ -4071,7 +4168,7 @@ label_E311::
     jr   label_E32D
 
 label_E328::
-    ld   hl, $FFF3
+    ld hl, hSFX
     ld   [hl], $01
 
 label_E32D::
@@ -4111,7 +4208,7 @@ label_E32D::
     ld   a, $0B
     ldh  [$FFA5], a
     ld   d, $0C
-    call label_E472
+    call AddItemToInventory
     ld   hl, $DB76
     ld   de, $DB4C
 
@@ -4128,6 +4225,7 @@ label_E367::
     ld   a, $EF
     call label_2385
 
+; Increment seashell count
 label_E36D::
     call label_D12A
     ld   hl, wSeashellsCount
@@ -4138,38 +4236,41 @@ label_E373::
     jr   z, label_E37C
     add  a, $01
     daa
+	; Write new seashell value to seashells count
     ld   [hl], a
 
 label_E37C::
     ret
-    ld   hl, $DB78
-    ld   de, $DB45
+
+
+    ld hl, $db78
+    ld de, wArrowCount
     jr   label_E35F
     ld   d, $02
-    call label_E472
-    ld   hl, $DB77
-    ld   de, $DB4D
+    call AddItemToInventory
+    ld hl, $db77
+    ld de, wBombCount
     jr   label_E35F
     xor  a
     ld   [wBossDefeated], a
-    ld   [$C3CB], a
-    ld   a, $1B
-    ld   [$D368], a
-    ld   [$C167], a
+    ld [$c3cb], a
+    ld a, $1b
+    ld [wWorldMusicTrack], a
+    ld [wC167], a
 
 label_E3A1::
-    ldh  a, [$FF98]
+    ldh a, [hLinkPositionX]
     push af
-    add  a, $04
-    ldh  [$FF98], a
+    add $04
+    ldh [hLinkPositionX], a
     call label_E41E
     pop  af
-    ldh  [$FF98], a
+    ldh [hLinkPositionX], a
     jr   label_E3D2
     xor  a
     ld   [wActivePowerUp], a
     ld   a, $25
-    ld   [$D368], a
+    ld [wWorldMusicTrack], a
     ld   [wBossDefeated], a
     call IsEntityFrameCounterZero
     ld   a, $70
@@ -4189,12 +4290,12 @@ label_E3D2::
     ld   [$C111], a
 
 label_E3DB::
-    ld   hl, $C280
+    ld hl, wEntitiesTypeTable
     add  hl, bc
     ld   [hl], $05
     jp   label_CAF
     ld   a, $10
-    ld   [$D368], a
+    ld [wWorldMusicTrack], a
     call IncrementEntityWalkingAttr
     jr   label_E3DB
 
@@ -4214,14 +4315,14 @@ label_E422::
     push de
     ld   hl, data_E3EE
     add  hl, de
-    ldh  a, [$FF98]
-    add  a, [hl]
-    ldh  [$FFD7], a
+    ldh a, [hLinkPositionX]
+    add [hl]
+    ldh [$d7], a
     ld   hl, data_E3F2
     add  hl, de
-    ldh  a, [$FF99]
-    add  a, [hl]
-    ldh  [$FFD8], a
+    ldh a, [hLinkPositionY]
+    add [hl]
+    ldh [$d8], a
     ld   a, $07
     call label_CC7
     ld   hl, $C520
@@ -4236,12 +4337,15 @@ label_E422::
     cp   $FF
     jr   nz, label_E422
     ret
-    ld   a, [$DB4E]
+
+
+    ld a, [wDidFindSword]
     and  a
     jr   nz, label_E468
-    ld   a, $0F
-    ld   [$D368], a
-    ld   [$C167], a
+
+    ld a, $0f
+    ld [wWorldMusicTrack], a
+    ld [wC167], a
     call label_E3A1
     call IsEntityFrameCounterZero
     ld   [hl], $A0
@@ -4250,24 +4354,27 @@ label_E422::
     ret
 
 label_E468::
-    ld   hl, $C2B0
+    ld hl, wEntitiesUnknownTableB
     add  hl, bc
     ld   a, [hl]
-    ld   [$DB44], a
+    ld [wShieldLevel], a
     ld   d, $04
 
-label_E472::
-    ld   hl, $DB00
+; Item ID stored in [d] is added to the first open inventory slot
+AddItemToInventory::
+    ld   hl, wAButtonSlot
     ld   e, $0C
 
+; Search through inventory for a matching item ID
 label_E477::
     ld   a, [hli]
     cp   d
     jr   z, label_E48E
     dec  e
     jr   nz, label_E477
-    ld   hl, $DB00
-
+    ld hl, wAButtonSlot
+	
+; Look for an empty inventory slot and load the item into it
 label_E481::
     ld   a, [hl]
     and  a
@@ -4284,11 +4391,14 @@ label_E487::
 
 label_E48E::
     ret
-    ldh  a, [$FFF6]
+
+
+    ldh a, [hMapIndex]
     cp   $80
     jr   z, label_E4A5
-    ldh  a, [$FFF6]
-    cp   $7C
+
+    ldh a, [hMapIndex]
+    cp $7c
     jr   nz, label_E4A0
     ld   hl, $D969
     set  4, [hl]
@@ -4300,7 +4410,7 @@ label_E4A0::
 
 label_E4A5::
     ld   a, $10
-    ld   [$D368], a
+    ld [wWorldMusicTrack], a
     jp   label_E3D2
 
 label_E4AD::
@@ -4329,7 +4439,7 @@ label_E4CA::
     ld   d, $00
 
 label_E4CF::
-    ld   hl, $C280
+    ld hl, wEntitiesTypeTable
     add  hl, de
     ld   a, [hl]
     and  a
@@ -4348,11 +4458,11 @@ label_E4E0::
     ld   hl, $C3A0
     add  hl, de
     ld   [hl], a
-    ld   hl, $C200
+    ld hl, wEntity0PosX
     add  hl, bc
     ld   a, [hl]
-    ldh  [$FFD7], a
-    ld   hl, $C210
+    ldh [$d7], a
+    ld hl, wEntitiesPosYTable
     add  hl, bc
     ld   a, [hl]
     ldh  [$FFD8], a
@@ -4491,16 +4601,17 @@ label_E614::
     jr   label_E64A
 
 label_E625::
-    ldh  a, [$FFEE]
-    ld   hl, $FF98
-    sub  a, [hl]
-    add  a, $18
+    ldh a, [$ee]
+    ld hl, hLinkPositionX
+    sub [hl]
+    add $18
     cp   $30
     jr   nc, label_E64A
-    ldh  a, [$FFEF]
-    ld   hl, $FF99
-    sub  a, [hl]
-    add  a, $18
+
+    ldh a, [$ef]
+    ld hl, hLinkPositionY
+    sub [hl]
+    add $18
     cp   $30
     jr   nc, label_E64A
     call label_ECD5
@@ -4531,14 +4642,16 @@ label_E650::
     or   $08
     ld   [hl], a
     call label_E5B0
-    ld   a, [$DBA5]
+    ld a, [wActiveRoom]
     and  a
     jr   z, label_E68B
-    ld   a, [$C16B]
+
+    ld a, [wTransitionSequenceCounter]
     cp   $04
     ret  nz
-    ld   e, $E4
-    ld   a, [$C124]
+
+    ld e, $e4
+    ld a, [wMapSlideTransitionState]
     and  a
     jr   nz, label_E687
     call IsEntityFrameCounterZero
@@ -4547,7 +4660,7 @@ label_E650::
     ld   e, $84
 
 label_E687::
-    ld   hl, $DB97
+    ld hl, wBGPalette
     ld   [hl], e
 
 label_E68B::
@@ -4570,7 +4683,7 @@ label_E68C::
     call label_C4B
 
 label_E6AD::
-    ld   hl, $C14E
+    ld hl, wHasPlacedBomb
     inc  [hl]
     cp   $22
     jr   c, label_E68C
@@ -4593,7 +4706,8 @@ label_E6BF::
     add  hl, bc
     or   [hl]
     jr   nz, label_E6FA
-    ld   a, [$DB00]
+
+    ld a, [wAButtonSlot]
     cp   $02
     jr   nz, label_E6EA
     ldh  a, [$FFCC]
@@ -4602,7 +4716,7 @@ label_E6BF::
     jr   label_E6FA
 
 label_E6EA::
-    ld   a, [$DB01]
+    ld a, [wBButtonSlot]
     cp   $02
     jr   nz, label_E6FA
     ldh  a, [$FFCC]
@@ -4613,7 +4727,7 @@ label_E6F7::
     call label_CE35
 
 label_E6FA::
-    ld   hl, $C2A0
+    ld hl, wEntitiesUnknownTableA
     add  hl, bc
     ld   a, [hl]
     and  $03
@@ -4682,7 +4796,7 @@ label_E771::
     and  a
     jp   nz, label_E8E5
     push bc
-    ld   hl, $C200
+    ld hl, wEntity0PosX
     add  hl, bc
     ld   a, [hl]
     sub  a, $08
@@ -4692,7 +4806,7 @@ label_E771::
     and  $F0
     ldh  [$FFCE], a
     swap a
-    ld   hl, $C210
+    ld hl, wEntitiesPosYTable
     add  hl, bc
     ld   c, a
     ld   a, [hl]
@@ -4705,7 +4819,7 @@ label_E771::
     or   c
     ld   c, a
     ld   b, $00
-    ld   hl, $D711
+    ld hl, wTileMap
     ld   a, h
     add  hl, bc
     ld   h, a
@@ -4718,7 +4832,8 @@ label_E771::
     jr   c, label_E828
     cp   $BF
     jr   nc, label_E828
-    ld   a, [$DBA5]
+
+    ld a, [wActiveRoom]
     and  a
     jr   nz, label_E828
     ld   a, $02
@@ -4734,7 +4849,7 @@ label_E771::
     ld   a, c
     and  $EE
     ld   c, a
-    ld   hl, $D711
+    ld hl, wTileMap
     add  hl, bc
     ld   a, $09
     ldi  [hl], a
@@ -4786,7 +4901,7 @@ label_E822::
     jp   label_E865
 
 label_E828::
-    ld   a, [$DBA5]
+    ld a, [wActiveRoom]
     ld   d, a
     call label_2A26
     sub  a, $99
@@ -4795,22 +4910,22 @@ label_E828::
     jp   nc, label_E8E4
     ld   c, a
     ld   a, $02
-    ldh  [$FFF2], a
-    ld   a, [$DBA5]
+    ldh [$f2], a
+    ld a, [wActiveRoom]
     and  a
     jr   nz, label_E878
     pop  bc
     ldh  a, [$FFE9]
     ld   e, a
     ld   d, b
-    ld   hl, $D711
+    ld hl, wTileMap
     add  hl, de
     ld   a, $E1
     ld   [hl], a
     ld   [$DDD8], a
     ld   a, $83
     call label_B2F
-    ldh  a, [$FFFE]
+    ldh a, [hIsGBC]
     and  a
     jr   z, label_E862
     ld   de, data_E751
@@ -4821,8 +4936,8 @@ label_E862::
 
 label_E865::
     push de
-    ld   hl, $D800
-    ldh  a, [$FFF6]
+    ld hl, wMinimapTiles
+    ldh a, [hMapIndex]
     ld   e, a
     ld   d, $00
     add  hl, de
@@ -4833,12 +4948,12 @@ label_E865::
     jp   label_D1F5
 
 label_E878::
-    ld   hl, $D900
-    ldh  a, [$FFF6]
+    ld hl, $d900
+    ldh a, [hMapIndex]
     ld   e, a
     ld   d, $00
-    ldh  a, [$FFF7]
-    cp   $FF
+    ldh a, [hMapTileset]
+    cp $ff
     jr   nz, label_E88B
     ld   hl, $DDE0
     jr   label_E894
@@ -4885,7 +5000,7 @@ label_E8BE::
     or   e
     ld   e, a
     ld   d, $00
-    ld   hl, $D711
+    ld hl, wTileMap
     add  hl, de
     ld   e, l
     ld   d, h
@@ -4939,12 +5054,13 @@ label_E90F::
     ldh  [$FFCD], a
     or   c
     ld   e, a
-    ld   hl, $D711
+    ld hl, wTileMap
     add  hl, de
     ld   a, h
     cp   $D7
     jp   nz, label_E9A0
-    ld   a, [$DBA5]
+
+    ld a, [wActiveRoom]
     and  a
     ld   a, [hl]
     ldh  [$FFAF], a
@@ -4961,12 +5077,13 @@ label_E90F::
 label_E93C::
     cp   $A9
     jp   nz, label_E9A0
-    ld   hl, $D900
-    ldh  a, [$FFF6]
+
+    ld hl, $d900
+    ldh a, [hMapIndex]
     ld   c, a
     ld   b, $00
-    ldh  a, [$FFF7]
-    cp   $FF
+    ldh a, [hMapTileset]
+    cp $ff
     jr   nz, label_E954
     ld   hl, $DDE0
     jr   label_E95D
@@ -4991,20 +5108,20 @@ label_E964::
     call label_E4CA
     jr   c, label_E9A0
     xor  a
-    ld   [$C19B], a
-    ld   hl, $C200
+    ld [$c19b], a
+    ld hl, wEntity0PosX
     add  hl, de
     ldh  a, [$FFCE]
     add  a, $08
     ld   [hl], a
-    ld   hl, $C210
+    ld hl, wEntitiesPosYTable
     add  hl, de
     ldh  a, [$FFCD]
     add  a, $10
     ld   [hl], a
     ld   hl, $C3B0
     add  hl, de
-    ld   a, [$DBA5]
+    ld a, [wActiveRoom]
     xor  $01
     ld   [hl], a
     ldh  [$FFF1], a
@@ -5040,7 +5157,7 @@ label_E9D9::
     ld   de, data_E9AA
     call label_EAD7
     call label_FF78
-    ld   a, [$DBA5]
+    ld a, [wActiveRoom]
     and  a
     ldh  a, [$FFAF]
     jr   z, label_E9F0
@@ -5055,7 +5172,7 @@ label_E9F0::
     jr   nz, label_EA1D
 
 label_E9F8::
-    ld   hl, $C2A0
+    ld hl, wEntitiesUnknownTableA
     add  hl, bc
     ld   [hl], b
     call label_C00
@@ -5084,7 +5201,9 @@ data_EA1E::
 label_EA2E::
     ld   de, data_EA1E
     jp   label_EAD7
-    ld   hl, $C14D
+
+
+    ld hl, wProjectileCount
     inc  [hl]
     ldh  a, [$FFF0]
     and  a
@@ -5124,15 +5243,16 @@ label_EA70::
     ld   a, $02
     call label_E4CA
     jr   c, label_EA93
-    ldh  a, [$FFD7]
-    ld   hl, $C200
+
+    ldh a, [$d7]
+    ld hl, wEntity0PosX
     add  hl, de
     ld   [hl], a
-    ldh  a, [$FFD8]
-    ld   hl, $C210
+    ldh a, [$d8]
+    ld hl, wEntitiesPosYTable
     add  hl, de
     ld   [hl], a
-    ld   hl, $C2E0
+    ld hl, wEntitiesFrameCounterTable
     add  hl, de
     ld   [hl], $17
     call label_C4B
@@ -5184,7 +5304,7 @@ label_EADA::
     jr   nz, label_EB4C
     call label_FF25
     call label_FCAB
-    ld   hl, $C2A0
+    ld hl, wEntitiesUnknownTableA
     add  hl, bc
     ld   a, [hl]
     and  a
@@ -5202,7 +5322,7 @@ label_EAFF::
     ld   hl, $C320
     add  hl, bc
     ld   [hl], $10
-    ld   hl, $C2A0
+    ld hl, wEntitiesUnknownTableA
     add  hl, bc
     ld   a, [hl]
     inc  a
@@ -5309,7 +5429,8 @@ label_EB8C::
     ld   d, b
     and  a
     jr   z, label_EBAB
-    ldh  a, [$FFE7]
+
+    ldh a, [hFrameCounter]
     and  $07
     jr   nz, label_EBAB
     ld   hl, $C240
@@ -5362,25 +5483,29 @@ label_EBDE::
     ldh  a, [$FFA2]
     and  a
     jr   nz, label_EC5A
-    ld   hl, $FFEE
-    ldh  a, [$FF98]
-    sub  a, [hl]
-    add  a, $06
-    cp   $0C
+
+    ld hl, $ffee
+    ldh a, [hLinkPositionX]
+    sub [hl]
+    add $06
+    cp $0c
     jr   nc, label_EC5A
-    ld   hl, $FFEC
-    ldh  a, [$FF99]
-    sub  a, [hl]
-    add  a, $06
-    cp   $0C
+
+    ld hl, $ffec
+    ldh a, [hLinkPositionY]
+    sub [hl]
+    add $06
+    cp $0c
     jr   nc, label_EC5A
-    ld   a, [$C15B]
+
+    ld a, [wIsUsingShield]
     and  a
     jr   z, label_EC5B
     ldh  a, [$FFEB]
     cp   $2B
     jr   nz, label_EC41
-    ld   a, [$DB44]
+
+    ld a, [wShieldLevel]
     cp   $02
     jr   c, label_EC5B
     ldh  a, [$FF9E]
@@ -5396,7 +5521,8 @@ label_EBDE::
     and  $0F
     cp   $05
     jr   nc, label_EC5B
-    ld   hl, $C2A0
+
+    ld hl, wEntitiesUnknownTableA
     add  hl, bc
     ld   [hl], $02
     ld   a, $07
@@ -5424,7 +5550,7 @@ label_EC41::
     ldh  [$FFF2], a
 
 label_EC54::
-    ld   hl, $C2A0
+    ld hl, wEntitiesUnknownTableA
     add  hl, bc
     ld   [hl], $FF
 
@@ -5443,7 +5569,7 @@ label_EC68::
     jp   label_3F8D
 
 label_EC6B::
-    ldh  a, [$FFE7]
+    ldh a, [hFrameCounter]
     xor  c
     rra
     jp   nc, label_ECCB
@@ -5466,9 +5592,9 @@ label_EC77::
     ldh  a, [$FFEE]
     add  a, [hl]
     push hl
-    ld   hl, $FF98
-    sub  a, [hl]
-    sub  a, $08
+    ld hl, hLinkPositionX
+    sub [hl]
+    sub $08
     cp   $80
     jr   c, label_EC98
     cpl
@@ -5488,9 +5614,9 @@ label_EC98::
     ldh  a, [$FFEC]
     add  a, [hl]
     push hl
-    ld   hl, $FF99
-    sub  a, [hl]
-    sub  a, $08
+    ld hl, hLinkPositionY
+    sub [hl]
+    sub $08
     cp   $80
     jr   c, label_ECB5
     cpl
@@ -5523,8 +5649,8 @@ label_ECCB::
     ret
 
 label_ECCD::
-    ldh  a, [$FF9D]
-    sub  a, $4E
+    ldh a, [hLinkAnimationState]
+    sub $4e
     cp   $02
     jr   c, label_ECC9
 
@@ -5543,8 +5669,8 @@ label_ECD5::
     ld   a, $F0
     ldh  [$FF9B], a
     call label_3D7F
-    ld   a, $0E
-    ldh  [$FFF3], a
+    ld a, $0e
+    ldh [hSFX], a
     ret
 
 label_ECF9::
@@ -5573,15 +5699,15 @@ label_ED17::
 
 label_ED1B::
     ld   a, $02
-    ldh  [$FFB7], a
-    ld   hl, $C290
+    ldh [$b7], a
+    ld hl, wEntitiesWalkingTable
     add  hl, bc
     ld   [hl], $02
     call IsEntityFrameCounterZero
     ld   [hl], $30
-    ld   a, $0E
-    ldh  [$FFF3], a
-    ldh  a, [$FFF9]
+    ld a, $0e
+    ldh [hSFX], a
+    ldh a, [$f9]
     and  a
     jr   nz, label_ED38
     ld   a, $10
@@ -5622,7 +5748,7 @@ label_ED5D::
     call IncrementEntityWalkingAttr
     ld   [hl], $08
     ld   a, $03
-    ldh  [$FFF3], a
+    ldh [hSFX], a
     ret
 
 label_ED73::
@@ -5635,15 +5761,15 @@ label_ED73::
     or   [hl]
     jp   nz, label_EE0A
     ld   a, $03
-    ldh  [$FFF3], a
-    ld   hl, $C4D0
+    ldh [hSFX], a
+    ld hl, $c4d0
     add  hl, bc
     ld   d, b
     ld   e, [hl]
     ld   hl, data_C7F1
     add  hl, de
     ld   e, [hl]
-    ld   a, [$DC0F]
+    ld a, [wTunicType]
     cp   $02
     jr   z, label_EDA9
     ld   a, [wActivePowerUp]
@@ -5681,7 +5807,8 @@ label_EDAB::
     ldh  a, [$FFB0]
     cp   $22
     jr   z, label_EDDD
-    ld   [$D368], a
+
+    ld [wWorldMusicTrack], a
 
 label_EDDD::
     ldh  [$FFBF], a
@@ -5696,7 +5823,8 @@ label_EDDF::
     jp   z, label_EFA7
     cp   $5A
     jr   nz, label_EDFA
-    ld   hl, $C2A0
+
+    ld hl, wEntitiesUnknownTableA
     add  hl, bc
     ld   [hl], $01
 
@@ -5830,7 +5958,8 @@ label_EE8E::
     ldh  a, [$FFEB]
     cp   $E2
     jr   nz, label_EED1
-    ld   a, [$DB44]
+
+    ld a, [wShieldLevel]
     cp   $02
     ret  nz
     ldh  a, [$FF9E]
@@ -5875,7 +6004,7 @@ label_EEF7::
     jp   z, label_EF93
 
 label_EF04::
-    ld   hl, $C2B0
+    ld hl, wEntitiesUnknownTableB
     add  hl, bc
     ld   a, [hl]
     cpl
@@ -5901,7 +6030,8 @@ label_EF24::
 label_EF2A::
     cp   $2C
     jr   nz, label_EF6D
-    ld   hl, $C290
+
+    ld hl, wEntitiesWalkingTable
     add  hl, bc
     ld   a, [hl]
     cp   $03
@@ -6009,9 +6139,9 @@ label_EFB3::
 label_EFB9::
     ld   a, $12
     call label_F565
-    ld   hl, $FFE9
-    ldh  a, [$FFCB]
-    and  $0F
+    ld hl, hFFE9
+    ldh a, [hPressedButtonsMask]
+    and $0f
     ld   a, $08
     or   [hl]
     jr   z, label_EFCC
@@ -6057,7 +6187,7 @@ label_EFE8::
     ret
 
 label_F007::
-    ld   a, [$C121]
+    ld a, [wIsUsingSpinAttack]
     and  a
     jr   nz, label_F013
     ld   a, [$C16A]
@@ -6081,11 +6211,11 @@ label_F018::
     ld   a, $40
     ld   [$D464], a
     xor  a
-    ld   [$C137], a
-    ld   [$C16A], a
-    ld   [$C121], a
-    ld   a, $1C
-    ldh  [$FFF4], a
+    ld [$c137], a
+    ld [wC16A], a
+    ld [wIsUsingSpinAttack], a
+    ld a, $1c
+    ldh [hFFF4], a
     jp   label_ECD5
 
 label_F042::
@@ -6128,7 +6258,8 @@ label_F07D::
     ldh  a, [$FFE8]
     and  a
     jr   nz, label_F0A9
-    ld   hl, $C2B0
+
+    ld hl, wEntitiesUnknownTableB
     add  hl, bc
     ld   a, [hl]
     cp   $04
@@ -6169,7 +6300,8 @@ label_F0B9::
     jp   z, label_EF04
     cp   $5C
     jr   nz, label_F0E7
-    ld   a, [$DC0F]
+
+    ld a, [wTunicType]
     cp   $01
     jr   z, label_F0DD
     ld   a, [wActivePowerUp]
@@ -6212,7 +6344,8 @@ label_F102::
 label_F10D::
     cp   $24
     jr   nz, label_F146
-    ld   hl, $C2C0
+
+    ld hl, wEntitiesUnknownTableC
     add  hl, bc
     ld   a, [hl]
     and  a
@@ -6263,7 +6396,7 @@ label_F15E::
     call label_EFCC
     ld   hl, $FFF2
     ld   [hl], $09
-    ld   a, [$DC0F]
+    ld a, [wTunicType]
     cp   $01
     jr   z, label_F17A
     ld   a, [wActivePowerUp]
@@ -6279,8 +6412,8 @@ label_F17A::
     add  hl, bc
     ld   [hl], $01
     ld   a, $11
-    ldh  [$FFF3], a
-    ld   hl, $C280
+    ldh [hSFX], a
+    ld hl, wEntitiesTypeTable
     add  hl, bc
     ld   a, [hl]
     cp   $01
@@ -6295,19 +6428,19 @@ label_F19C::
 label_F19D::
     ld   a, c
     inc  a
-    ld   [$C1AC], a
-    ld   a, [$DC0F]
+    ld [$c1ac], a
+    ld a, [wTunicType]
     and  $01
     jr   nz, label_F1AE
     ld   a, [wActivePowerUp]
     and  $01
 
 label_F1AE::
-    ld   hl, $C121
+    ld hl, wIsUsingSpinAttack
     or   [hl]
     ld   hl, $C14A
     or   [hl]
-    ld   a, [$DB4E]
+    ld a, [wDidFindSword]
     jr   z, label_F1BC
     inc  a
 
@@ -6362,7 +6495,8 @@ label_F1C0::
     pop  af
     and  a
     jr   nz, label_F215
-    ld   a, [$C121]
+
+    ld a, [wIsUsingSpinAttack]
     and  a
     jr   nz, label_F215
     pop  af
@@ -6376,7 +6510,8 @@ label_F215::
     ld   [hl], $03
     and  $80
     jr   z, label_F228
-    ld   hl, $FFF3
+
+    ld hl, hSFX
     ld   [hl], $07
 
 label_F228::
@@ -6386,7 +6521,7 @@ label_F228::
     cp   $6C
     jr   nz, label_F235
     ld   a, $13
-    ldh  [$FFF3], a
+    ldh [hSFX], a
 
 label_F235::
     pop  af
@@ -6397,7 +6532,7 @@ label_F235::
     ld   hl, $FFF4
     ld   [hl], $12
     call label_F3DB
-    ld   hl, $C280
+    ld hl, wEntitiesTypeTable
     add  hl, bc
     ld   [hl], $03
     call IsEntityFrameCounterZero
@@ -6419,7 +6554,7 @@ label_F260::
     call label_F3DB
 
 label_F267::
-    ld   hl, $C280
+    ld hl, wEntitiesTypeTable
     add  hl, bc
     ld   [hl], $06
     ld   hl, $C300
@@ -6442,7 +6577,7 @@ label_F279::
     jr   nz, label_F293
 
 label_F289::
-    ld   hl, $C2B0
+    ld hl, wEntitiesUnknownTableB
     add  hl, bc
     ld   a, [hl]
     and  a
@@ -6457,11 +6592,11 @@ label_F293::
     ld   [hl], $80
 
 label_F29D::
-    ld   hl, $C200
+    ld hl, wEntity0PosX
     add  hl, bc
     ld   a, [hl]
-    ldh  [$FFD7], a
-    ld   hl, $C210
+    ldh [$d7], a
+    ld hl, wEntitiesPosYTable
     add  hl, bc
     ld   a, [hl]
     ld   hl, $C310
@@ -6482,7 +6617,7 @@ label_F2B5::
     jp   nz, label_F3B6
 
 label_F2C2::
-    ld   hl, $C280
+    ld hl, wEntitiesTypeTable
     add  hl, bc
     ld   [hl], $01
     ld   hl, $C430
@@ -6499,7 +6634,8 @@ label_F2D8::
     ld   a, e
     cp   c
     jr   z, label_F2EE
-    ld   hl, $C280
+
+    ld hl, wEntitiesTypeTable
     add  hl, de
     ld   a, [hl]
     cp   $05
@@ -6515,18 +6651,19 @@ label_F2EE::
     ld   a, e
     cp   $FF
     jr   nz, label_F2D8
-    ld   a, [$DBAF]
+
+    ld a, [wCurrentBank]
     push af
     ld   a, $03
     call SwitchBank
     call label_27F2
     pop  af
-    ld   [$DBAF], a
+    ld [wCurrentBank], a
 
 label_F304::
     ld   a, $03
-    ld   [$C5A7], a
-    ld   hl, $C2C0
+    ld [$c5a7], a
+    ld hl, wEntitiesUnknownTableC
     add  hl, bc
     ld   [hl], b
     ld   hl, $C3A0
@@ -6545,19 +6682,19 @@ label_F304::
 label_F325::
     ld   a, e
     call label_2385
-    ld   a, $5E
-    ld   [$D368], a
+    ld a, $5e
+    ld [wWorldMusicTrack], a
     jr   label_F33E
 
 label_F330::
-    ldh  a, [$FF99]
+    ldh a, [hLinkPositionY]
     push af
     ld   a, $10
-    ldh  [$FF99], a
+    ldh [hLinkPositionY], a
     ld   a, e
     call label_2385
     pop  af
-    ldh  [$FF99], a
+    ldh [hLinkPositionY], a
 
 label_F33E::
     call IncrementEntityWalkingAttr
@@ -6603,12 +6740,13 @@ label_F36D::
     jr   nz, label_F3AA
 
 label_F37E::
-    ld   hl, $C290
+    ld hl, wEntitiesWalkingTable
     add  hl, de
     ld   a, [hl]
     and  a
     jr   nz, label_F3AA
-    ld   hl, $C280
+
+    ld hl, wEntitiesTypeTable
     add  hl, de
     ld   a, [hl]
     and  a
@@ -6686,7 +6824,7 @@ label_F3E7::
     or   [hl]
     ld   hl, $FFB6
     or   [hl]
-    ld   hl, $C121
+    ld hl, wIsUsingSpinAttack
     or   [hl]
     jp   nz, label_F4E1
     ld   a, [$C140]
@@ -6765,8 +6903,8 @@ label_F440::
     xor  a
     ld   [$C122], a
     call label_C50
-    ld   hl, $C121
-    ld   a, [$C16A]
+    ld hl, wIsUsingSpinAttack
+    ld a, [wC16A]
     or   [hl]
     jr   z, label_F48B
     ld   a, $0C
@@ -6833,18 +6971,19 @@ data_F4E8::
     db $FC, $FC, $F0, 0
 
 label_F4EC::
-    ldh  a, [$FFE7]
+    ldh a, [hFrameCounter]
     xor  c
     rra
     jr   nc, label_F570
-    ldh  a, [$FF98]
-    add  a, $08
-    ldh  [$FFD7], a
-    ldh  a, [$FF99]
-    add  a, $08
-    ldh  [$FFD9], a
-    ld   de, $FFEE
-    ld   hl, $D5C0
+
+    ldh a, [hLinkPositionX]
+    add $08
+    ldh [$d7], a
+    ldh a, [hLinkPositionY]
+    add $08
+    ldh [$d9], a
+    ld de, $ffee
+    ld hl, $d5c0
     ld   a, [de]
     add  a, [hl]
     push hl
@@ -6957,11 +7096,13 @@ label_F5A6::
     ld   a, e
     cp   c
     jp   z, label_F79F
-    ldh  a, [$FFE7]
+
+    ldh a, [hFrameCounter]
     xor  e
     and  $01
     jp   nz, label_F79F
-    ld   hl, $C280
+
+    ld hl, wEntitiesTypeTable
     add  hl, de
     ld   a, [hl]
     cp   $05
@@ -6971,14 +7112,16 @@ label_F5A6::
     ld   a, [hl]
     and  $40
     jp   nz, label_F79F
-    ld   hl, $C200
+
+    ld hl, wEntity0PosX
     add  hl, de
     ldh  a, [$FFEE]
     sub  a, [hl]
     add  a, $0C
     cp   $18
     jp   nc, label_F79F
-    ld   hl, $C210
+
+    ld hl, wEntitiesPosYTable
     add  hl, de
     ld   a, [hl]
     ld   hl, $C310
@@ -7018,13 +7161,13 @@ label_F5FE::
     ld   hl, $C250
     add  hl, de
     ld   [hl], a
-    ld   hl, $C2E0
+    ld hl, wEntitiesFrameCounterTable
     add  hl, de
     ld   [hl], $40
-    ld   hl, $C290
+    ld hl, wEntitiesWalkingTable
     add  hl, de
     ld   [hl], $02
-    ld   hl, $C2F0
+    ld hl, wEntitiesUnknowTableF
     add  hl, de
     ld   [hl], $08
     jp   label_F79F
@@ -7058,7 +7201,7 @@ label_F656::
     jr   z, label_F668
 
 label_F65F::
-    ld   hl, $C2A0
+    ld hl, wEntitiesUnknownTableA
     add  hl, bc
     ld   [hl], $01
     jp   label_F737
@@ -7072,7 +7215,8 @@ label_F668::
     ld   a, [hl]
     cp   $CA
     jr   nz, label_F680
-    ld   hl, $C290
+
+    ld hl, wEntitiesWalkingTable
     add  hl, de
     ld   a, [hl]
     and  a
@@ -7082,10 +7226,12 @@ label_F668::
 label_F680::
     cp   $3F
     jr   nz, label_F6AC
-    ld   a, [$DBA5]
+
+    ld a, [wActiveRoom]
     and  a
     jr   nz, label_F6AC
-    ld   hl, $C290
+
+    ld hl, wEntitiesWalkingTable
     add  hl, de
     ld   a, [hl]
     and  a
@@ -7098,10 +7244,10 @@ label_F680::
     add  hl, de
     ld   [hl], $10
     ld   a, $03
-    ld   [$DBAF], a
+    ld [wCurrentBank], a
     call label_27F2
     ld   a, $18
-    ld   [$DBAF], a
+    ld [wCurrentBank], a
 
 label_F6AC::
     ld   hl, $C350
@@ -7127,7 +7273,8 @@ label_F6AC::
     add  hl, bc
     cp   [hl]
     jr   nz, label_F710
-    ld   hl, $C2C0
+
+    ld hl, wEntitiesUnknownTableC
     add  hl, de
     ld   a, [hl]
     and  a
@@ -7140,12 +7287,13 @@ label_F6AC::
     ld   a, $32
     call label_E4CA
     jr   c, label_F70D
-    ldh  a, [$FFD7]
-    ld   hl, $C200
+
+    ldh a, [$d7]
+    ld hl, wEntity0PosX
     add  hl, de
     ld   [hl], a
-    ldh  a, [$FFD8]
-    ld   hl, $C210
+    ldh a, [$d8]
+    ld hl, wEntitiesPosYTable
     add  hl, de
     ld   [hl], a
     ld   hl, $C390
@@ -7208,7 +7356,7 @@ label_F737::
     jp   label_F79F
 
 label_F751::
-    ld   hl, $C280
+    ld hl, wEntitiesTypeTable
     add  hl, bc
     ld   a, [hl]
     cp   $08
@@ -7241,7 +7389,7 @@ label_F75A::
     jr   label_F79A
 
 label_F782::
-    ld   hl, $C2A0
+    ld hl, wEntitiesUnknownTableA
     add  hl, bc
     ld   a, [hl]
     and  a
@@ -7312,7 +7460,7 @@ label_F7D9::
     ld   d, $00
 
 label_F7DD::
-    ld   hl, $C280
+    ld hl, wEntitiesTypeTable
     add  hl, de
     ld   a, [hl]
     cp   $05
@@ -7327,14 +7475,16 @@ label_F7DD::
     ld   a, [hl]
     and  $80
     jr   nz, label_F834
-    ld   hl, $C200
+
+    ld hl, wEntity0PosX
     add  hl, de
     ldh  a, [$FFEE]
     sub  a, [hl]
     add  a, $18
     cp   $30
     jr   nc, label_F834
-    ld   hl, $C210
+
+    ld hl, wEntitiesPosYTable
     add  hl, de
     ld   a, [hl]
     ld   hl, $C310
@@ -7367,27 +7517,27 @@ label_F834::
     ret
 
 label_F83B::
-    ldh  [$FFD7], a
-    ldh  a, [$FF98]
+    ldh [$d7], a
+    ldh a, [hLinkPositionX]
     push af
-    ld   hl, $C200
+    ld hl, wEntity0PosX
     add  hl, de
     ld   a, [hl]
-    ldh  [$FF98], a
-    ldh  a, [$FF99]
+    ldh [hLinkPositionX], a
+    ldh a, [hLinkPositionY]
     push af
-    ld   hl, $C210
+    ld hl, wEntitiesPosYTable
     add  hl, de
     ld   a, [hl]
-    ldh  [$FF99], a
+    ldh [hLinkPositionY], a
     push de
     ldh  a, [$FFD7]
     call label_FE45
     pop  de
     pop  af
-    ldh  [$FF99], a
+    ldh [hLinkPositionY], a
     pop  af
-    ldh  [$FF98], a
+    ldh [hLinkPositionX], a
     ret
 
 data_F85F::
@@ -7528,11 +7678,11 @@ label_F954::
     jr   nz, label_F973
 
 label_F95C::
-    ld   hl, $C200
+    ld hl, wEntity0PosX
     add  hl, bc
     ld   a, [hl]
-    ldh  [$FFD7], a
-    ld   hl, $C210
+    ldh [$d7], a
+    ld hl, wEntitiesPosYTable
     add  hl, bc
     ld   a, [hl]
     ldh  [$FFD8], a
@@ -7549,20 +7699,20 @@ label_F973::
     sub  a, $F1
     ld   e, a
     ld   d, b
-    ldh  a, [$FFE7]
+    ldh a, [hFrameCounter]
     and  $03
     jr   nz, label_F99A
     ld   hl, data_F883
     add  hl, de
     ld   a, [hl]
-    ld   hl, $C200
+    ld hl, wEntity0PosX
     add  hl, bc
     add  a, [hl]
     ld   [hl], a
     ld   hl, data_F88B
     add  hl, de
     ld   a, [hl]
-    ld   hl, $C210
+    ld hl, wEntitiesPosYTable
     add  hl, bc
     add  a, [hl]
     ld   [hl], a
@@ -7607,7 +7757,7 @@ label_F9CB::
     ld   hl, $C420
     add  hl, bc
     ld   [hl], $00
-    ld   hl, $C280
+    ld hl, wEntitiesTypeTable
     add  hl, bc
     ld   [hl], $02
     ldh  a, [$FFCE]
@@ -7652,8 +7802,8 @@ label_FA18::
     and  $03
     sla  a
     sla  a
-    ldh  [$FFD7], a
-    ld   hl, $C2A0
+    ldh [$d7], a
+    ld hl, wEntitiesUnknownTableA
     add  hl, bc
     xor  a
     ld   [hl], a
@@ -7675,7 +7825,8 @@ label_FA47::
     ldh  a, [$FFBE]
     and  a
     jr   nz, label_FA5D
-    ld   hl, $C200
+
+    ld hl, wEntity0PosX
     add  hl, bc
     ldh  a, [$FFEE]
     ld   [hl], a
@@ -7699,7 +7850,8 @@ label_FA6E::
     ldh  a, [$FFBE]
     and  a
     jr   nz, label_FA84
-    ld   hl, $C210
+
+    ld hl, wEntitiesPosYTable
     add  hl, bc
     ldh  a, [$FFEF]
     ld   [hl], a
@@ -7744,7 +7896,7 @@ label_FACD::
     jr   nz, label_FB0E
 
 label_FAF9::
-    ld   hl, $C210
+    ld hl, wEntitiesPosYTable
     add  hl, bc
     ld   a, [hl]
     ld   hl, $C310
@@ -7760,7 +7912,7 @@ label_FB09::
     jr   label_FB13
 
 label_FB0E::
-    ld   hl, $C210
+    ld hl, wEntitiesPosYTable
     add  hl, bc
     ld   a, [hl]
 
@@ -7779,7 +7931,7 @@ label_FB13::
     ld   hl, $FFD8
     or   [hl]
     ld   c, a
-    ld   hl, $D711
+    ld hl, wTileMap
     ld   a, h
     add  hl, bc
     ld   h, a
@@ -7790,7 +7942,7 @@ label_FB13::
     jp   z, label_FC7B
     push de
     ld   e, a
-    ld   a, [$DBA5]
+    ld a, [wActiveRoom]
     ld   d, a
     call label_2A2C
     pop  de
@@ -7909,13 +8061,16 @@ label_FBE4::
     ld   a, [hl]
     and  a
     jr   z, label_FC75
-    ldh  a, [$FFE7]
+
+    ldh a, [hFrameCounter]
     and  $03
     jr   z, label_FC28
-    ld   a, [$DBA5]
+
+    ld a, [wActiveRoom]
     and  a
     jr   nz, label_FC17
-    ldh  a, [$FFE7]
+
+    ldh a, [hFrameCounter]
     and  $01
     jr   z, label_FC28
 
@@ -7992,7 +8147,7 @@ label_FC7B::
     call label_3F8D
 
 label_FC8B::
-    ld   hl, $C290
+    ld hl, wEntitiesWalkingTable
     add  hl, bc
     ld   [hl], $01
 
@@ -8007,7 +8162,7 @@ label_FC9A::
     ld   hl, data_F87F
     add  hl, de
     ld   a, [hl]
-    ld   hl, $C2A0
+    ld hl, wEntitiesUnknownTableA
     add  hl, bc
     or   [hl]
     ld   [hl], a
@@ -8024,14 +8179,14 @@ data_FCA9::
 label_FCAB::
     ld   de, $0000
     push bc
-    ld   hl, $C200
+    ld hl, wEntity0PosX
     add  hl, bc
     ld   a, [hl]
     ldh  [$FFDB], a
     and  $F0
     ldh  [$FFCE], a
     swap a
-    ld   hl, $C210
+    ld hl, wEntitiesPosYTable
     add  hl, bc
     ld   c, a
     ld   a, [hl]
@@ -8043,7 +8198,7 @@ label_FCAB::
     ld   c, a
     ldh  [$FFE9], a
     ld   b, $00
-    ld   hl, $D711
+    ld hl, wTileMap
     ld   a, h
     add  hl, bc
     ld   h, a
@@ -8054,7 +8209,8 @@ label_FCAB::
     jp   z, label_FE03
     cp   $AB
     jp   nz, label_FD6B
-    ldh  a, [$FFFE]
+
+    ldh a, [hIsGBC]
     and  a
     jr   z, label_FCFD
     ld   a, [wLinkMotionState]
@@ -8063,7 +8219,8 @@ label_FCAB::
     ld   a, [$DDD6]
     and  a
     jp   nz, label_FE03
-    ld   a, [$C124]
+
+    ld a, [wMapSlideTransitionState]
     and  a
     jp   nz, label_FE03
 
@@ -8071,7 +8228,8 @@ label_FCFD::
     ldh  a, [$FFEB]
     cp   $04
     jr   nz, label_FD6B
-    ld   a, [$DBA5]
+
+    ld a, [wActiveRoom]
     and  a
     jr   z, label_FD6B
     push hl
@@ -8089,21 +8247,21 @@ label_FCFD::
     ld   b, d
     ld   d, h
     ld   e, l
-    ld   hl, $C2B0
+    ld hl, wEntitiesUnknownTableB
     add  hl, bc
     ld   [hl], d
-    ld   hl, $C2C0
+    ld hl, wEntitiesUnknownTableC
     add  hl, bc
     ld   [hl], e
-    ldh  a, [$FFCE]
-    ld   hl, $C200
+    ldh a, [$ce]
+    ld hl, wEntity0PosX
     add  hl, bc
     ld   [hl], a
-    ldh  a, [$FFCD]
-    ld   hl, $C210
+    ldh a, [$cd]
+    ld hl, wEntitiesPosYTable
     add  hl, bc
     ld   [hl], a
-    ld   hl, $C290
+    ld hl, wEntitiesWalkingTable
     add  hl, bc
     ld   [hl], $01
     call label_BFB
@@ -8116,7 +8274,7 @@ label_FCFD::
     jr   z, label_FD63
     sub  a, $04
     ld   [$C3CD], a
-    ldh  a, [$FFFE]
+    ldh a, [hIsGBC]
     and  a
     jr   z, label_FD63
     ld   a, $40
@@ -8135,7 +8293,7 @@ label_FD6A::
 label_FD6B::
     ld   a, [hl]
     ld   e, a
-    ld   a, [$DBA5]
+    ld a, [wActiveRoom]
     ld   d, a
     call label_2A2C
     ldh  [$FFD8], a
@@ -8158,13 +8316,16 @@ label_FD6B::
     ld   a, [hl]
     and  a
     jr   z, label_FDE3
-    ldh  a, [$FFE7]
+
+    ldh a, [hFrameCounter]
     and  $03
     jr   z, label_FE03
-    ld   a, [$DBA5]
+
+    ld a, [wActiveRoom]
     and  a
     jr   nz, label_FDAC
-    ldh  a, [$FFE7]
+
+    ldh a, [hFrameCounter]
     and  $01
     jr   z, label_FE03
 
@@ -8204,7 +8365,7 @@ label_FDCD::
     jr   nz, label_FE03
 
 label_FDE3::
-    ld   hl, $C2A0
+    ld hl, wEntitiesUnknownTableA
     add  hl, bc
     ld   [hl], $01
     ldh  a, [$FFEB]
@@ -8214,11 +8375,11 @@ label_FDE3::
     ret  z
 
 label_FDF3::
-    ld   hl, $C200
+    ld hl, wEntity0PosX
     add  hl, bc
     ldh  a, [$FFEE]
     ld   [hl], a
-    ld   hl, $C210
+    ld hl, wEntitiesPosYTable
     add  hl, bc
     ldh  a, [$FFEF]
     ld   [hl], a
@@ -8239,7 +8400,7 @@ label_FE09::
 
 label_FE0E::
     push bc
-    ld   hl, $C200
+    ld hl, wEntity0PosX
     add  hl, bc
     ld   a, [hl]
     sub  a, $01
@@ -8247,7 +8408,7 @@ label_FE0E::
     and  $F0
     ldh  [$FFCE], a
     swap a
-    ld   hl, $C210
+    ld hl, wEntitiesPosYTable
     add  hl, bc
     ld   c, a
     ld   a, [hl]
@@ -8258,7 +8419,7 @@ label_FE0E::
     or   c
     ld   c, a
     ld   b, $00
-    ld   hl, $D711
+    ld hl, wTileMap
     ld   a, h
     add  hl, bc
     ld   h, a
@@ -8266,7 +8427,7 @@ label_FE0E::
     ld   a, [hl]
     ldh  [$FFAF], a
     ld   e, a
-    ld   a, [$DBA5]
+    ld a, [wActiveRoom]
     ld   d, a
     call label_2A2C
     ldh  [$FFDA], a
@@ -8387,8 +8548,8 @@ label_FEC7::
 
 label_FED9::
     ld   e, $00
-    ldh  a, [$FF98]
-    ld   hl, $C200
+    ldh a, [hLinkPositionX]
+    ld hl, wEntity0PosX
     add  hl, bc
     sub  a, [hl]
     bit  7, a
@@ -8401,8 +8562,8 @@ label_FEE7::
 
 label_FEE9::
     ld   e, $02
-    ldh  a, [$FF99]
-    ld   hl, $C210
+    ldh a, [hLinkPositionY]
+    ld hl, wEntitiesPosYTable
     add  hl, bc
     sub  a, [hl]
     ld   hl, $C310
@@ -8475,7 +8636,7 @@ label_FF32::
     add  a, [hl]
     ld   [hl], a
     rl   d
-    ld   hl, $C200
+    ld hl, wEntity0PosX
 
 label_FF4A::
     add  hl, bc
@@ -8519,25 +8680,27 @@ label_FF78::
     jr   nz, label_FFA7
 
 label_FF7E::
-    ld   a, [$DB95]
+    ld a, [wGameplayType]
     cp   $07
     jr   z, label_FFA7
     cp   $01
     jr   z, label_FF94
     cp   $0B
     jr   nz, label_FFA7
-    ld   a, [$C16B]
+
+    ld a, [wTransitionSequenceCounter]
     cp   $04
     jr   nz, label_FFA7
 
 label_FF94::
-    ld   a, [$C19F]
-    ld   hl, $C1A8
+    ld a, [wDialogState]
+    ld hl, $c1a8
     or   [hl]
-    ld   hl, $C14F
+    ld hl, wInventoryAppearing
     or   [hl]
     jr   nz, label_FFA7
-    ld   a, [$C124]
+
+    ld a, [wMapSlideTransitionState]
     and  a
     jr   z, label_FFA8
 
