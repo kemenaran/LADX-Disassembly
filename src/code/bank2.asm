@@ -8997,14 +8997,16 @@ jr_002_799D:
 
     inc  d                                        ; $79A5: $14
 
+; Check if need to play key sound on entering room
 jr_002_79A6:
     ldh  a, [hMapIndex]                           ; $79A6: $F0 $F6
     ld   e, a                                     ; $79A8: $5F
+; Get the chest data for the current room
     call label_29ED                               ; $79A9: $CD $ED $29
-    cp   $1A                                      ; $79AC: $FE $1A
+    cp   CHEST_SMALL_KEY_ID                       ; $79AC: $FE $1A
     jr   z, jr_002_79BC                           ; $79AE: $28 $0C
 
-    cp   $19                                      ; $79B0: $FE $19
+    cp   CHEST_NIGHTMARE_KEY_ID                   ; $79B0: $FE $19
     jr   z, jr_002_79BC                           ; $79B2: $28 $08
 
     ld   a, [$C18E]                               ; $79B4: $FA $8E $C1
@@ -9012,6 +9014,7 @@ jr_002_79A6:
     cp   $80                                      ; $79B9: $FE $80
     ret  nz                                       ; $79BB: $C0
 
+; Set flag to play key sound?
 jr_002_79BC:
     ld   a, [wHasDungeonCompass]                  ; $79BC: $FA $CD $DB
     and  a                                        ; $79BF: $A7

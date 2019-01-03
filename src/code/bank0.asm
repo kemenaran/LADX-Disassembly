@@ -5750,6 +5750,7 @@ include "src/code/home/clear_memory.asm"
 label_29ED::
     ld   a, $14
     ld   [MBC3SelectBank], a
+; Get the treasure chest info for current room
     call label_5884
     jp   ReloadSavedBank
 
@@ -7937,6 +7938,7 @@ label_38D4::
     ld   [MBC3SelectBank], a
     ret
 
+; Take the high hex from second byte of room data
 label_38EA::
     ld   e, a
     ld   a, $14

@@ -38,6 +38,10 @@ include "code/bank5.asm"
 section "bank7",romx[$4000],bank[$07]
 include "code/bank7.asm"
 
+; Bank 9 starting on byte $200, ending on byte $268C
+; contains all the overworld collision data for first half of map
+; Tiles 0 - 7F
+
 section "bank12",romx[$4000],bank[$0C]
 incbin "gfx/characters/link_1.dmg.2bpp"
 incbin "gfx/items/items_1.dmg.2bpp"
@@ -85,8 +89,18 @@ incbin "gfx/items/items_2.dmg.2bpp"
 section "bank19",romx[$4000],bank[$13]
 incbin "gfx/ending/ending.dmg.2bpp"
 
+; Bank 22 ($16) contains sprite data for overworld
+; Starts on byte $3186, ends on byte $365D
+
+; Bank 26 ($1A) contains collision data for second half of overworld
+; This ends on byte $1E2A
+
 section "bank32",romx[$4000],bank[$20]
 include "code/bank32.asm"
+
+; Bank 37 ($25) and first quarter of 38 contains all the tilemap data for the overworld
+; Bank 37 contains $40 null bytes at end and ends on Map grid CB (0 in top left)
+; Bank 38 starts with map grid CC
 
 section "bank41",romx[$4000],bank[$29]
 incbin "gfx/photos/photo_nice_link.2bpp"

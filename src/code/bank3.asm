@@ -1466,7 +1466,7 @@ label_D081::
     ld   a, [hl]
     ldh  [$FFE8], a
     ld   d, b
-    cp   $11
+    cp   CHEST_TAIL_KEY_ID
     jr   nz, label_D0AC
     push af
     ld   a, [$C501]
@@ -1478,14 +1478,14 @@ label_D081::
 
 label_D0AC::
     ld   e, a
-    cp   $21
+    cp   CHEST_MESSAGE_ID
     jp   nc, label_D12A
-    cp   $20
+    cp   CHEST_SECRET_SEASHELL_ID
     jr   nz, label_D0B9
     jp   label_E36D
 
 label_D0B9::
-    cp   $1B
+    cp   CHEST_50_RUPEES_ID ; Jump if chest less than $1B (could be dungeon item, inventory item or dungeon key)
     jr   c, label_D0D8
     cp   $20
     jr   nc, label_D0D8
@@ -1502,7 +1502,7 @@ label_D0B9::
     jr   label_D12A
 
 label_D0D8::
-    cp   $16
+    cp   CHEST_MAP_ID ; Jump if chest less than $16 (could be dungeon key or inventory item)
     jr   c, label_D0EF
     cp   $1B
     jr   nc, label_D0EF
@@ -1516,10 +1516,10 @@ label_D0D8::
     jr   label_D12A
 
 label_D0EF::
-    cp   $0C
+    cp   CHEST_FLIPPERS_ID ; Jump if chest greater than $0C (could be a dungeon item or lens/medicine)
     jr   nc, label_D125
     ldh  a, [$FFE8]
-    cp   $01
+    cp   CHEST_SHIELD_ID
     jr   nz, label_D0FD
 
     ld hl, wShieldLevel
@@ -1527,7 +1527,7 @@ label_D0EF::
 
 ; Called When opening Feather chest with af = $0740, de = $0007, bc = $000F, $FFE8 = 07
 label_D0FD::
-    cp   $00
+    cp   CHEST_POWER_BRACELET_ID
     jr   nz, label_D10C
 
     ld a, [wPowerBraceletLevel]
@@ -1539,7 +1539,7 @@ label_D0FD::
 
 label_D10C::
     ldh  a, [$FFE8]
-    cp   $0A
+    cp   CHEST_BOMB_ID
     jr   nz, label_D11A
 
     ld hl, wBombCount

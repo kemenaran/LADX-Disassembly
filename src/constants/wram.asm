@@ -497,9 +497,11 @@ wD712 equ $D712
 ; On overworld, tracks which
 ; owl messages (and chests?)
 ; have been received (opened)
-; 80 = Not Received
-; A0 = Received
-; 90 = Opened
+; Bitwise Values
+; 10000000 - Visited
+; 00100000 - Owl Received
+; 00010000 - Chest Opened
+; 00000100 - Door opened (dungeon entrance or bombable entrance
 wMinimapTiles:: ; D800
   ds $ff
 
