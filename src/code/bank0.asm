@@ -8003,6 +8003,7 @@ label_3942::
     call label_53E4
     jp   ReloadSavedBank
 
+; First call when loading Level 2 Boss
 label_394D::
     ld   a, $14
     ld   [MBC3SelectBank], a
@@ -8106,7 +8107,7 @@ label_39F2::
     ld   a, [hl]
     and  a
     jr   z, label_3A03
-    ldh  [$FFEA], a
+    ldh  [$FFEA], a ; Load new state for boss (at least for level 2, $01 equals dead? (actually, maybe just controls the color flicker while dying))
     call label_3A18
 
 label_3A03::
@@ -8888,6 +8889,7 @@ label_3EDE::
 data_3EDF::
     db $B0, $B4, $B1, $B2, $B3, $B6, $BA, $BC, $B8
 
+; Second call when loading Level 2 Boss
 label_3EE8::
     ld   hl, wInventoryAppearing
     ld   a, [wMapSlideTransitionState]

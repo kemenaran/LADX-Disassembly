@@ -1,5 +1,5 @@
 
-data_C000::
+data_4000::
     db $42, $C2, $D2, $C2, $C2, $D2, $C2, $C2, $C3, $12, $42, $12, $42, $12, $12, $92
     db $12, $18, $12, $11, $12, 2, 2, 2, $12, 2, $12, $12, $11, 2, $12, $12
     db $12, 2, $42, $92, $12, $E2, $E2, 2, $12, 2, 2, $41, $12, $B1, $B1, $B1
@@ -176,7 +176,7 @@ label_C86B::
     add  hl, bc
     ld   e, [hl]
     ld   d, b
-    ld   hl, data_C000
+    ld   hl, data_4000
     add  hl, de
     ld   a, [hl]
     ld   hl, $C340
@@ -2838,11 +2838,11 @@ label_D9D6::
     ret
     ret
 
+; Data for heart container sprite
 data_D9D8::
-    xor  d
-    inc  d
-    xor  d
-    inc  [hl]
+    db $AA, $14, $AA, $34
+
+LoadHeartContainer:: ; 03:59DC
     ld   de, data_D9D8
     call label_3BC0
     call IsEntityFrameCounterZero
@@ -2851,7 +2851,8 @@ data_D9D8::
     jr   nz, label_DA17
     ld   a, $18
     ld [wWorldMusicTrack], a
-    ld hl, $db5b
+    ; Increase max hearts when picking up heart container
+    ld hl, wMaxHearts
     inc  [hl]
     ld   hl, wSubstractRupeeBufferLow
     ld   [hl], $FF
@@ -4436,7 +4437,7 @@ label_E4BC::
 
 label_E4CA::
     ld   e, $0F
-    push af
+    push af ; Push $36A0 after killing first boss ($36 points to something that points to something that loads a heart)
     ld   d, $00
 
 label_E4CF::
@@ -4444,7 +4445,7 @@ label_E4CF::
     add  hl, de
     ld   a, [hl]
     and  a
-    jr   z, label_E4E0
+    jr   z, label_E4E0 ; This jump is where $36A0 gets popped and used to load the heart ultimately
     dec  e
     ld   a, e
     cp   $FF

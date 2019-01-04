@@ -32,6 +32,9 @@ include "code/bank2.asm"
 section "bank3",romx[$4000],bank[$03]
 include "code/bank3.asm"
 
+section "bank4",romx[$4000],bank[$04]
+include "code/bank4.asm"
+
 section "bank5",romx[$4000],bank[$05]
 include "code/bank5.asm"
 
@@ -88,6 +91,10 @@ incbin "gfx/items/items_2.dmg.2bpp"
 
 section "bank19",romx[$4000],bank[$13]
 incbin "gfx/ending/ending.dmg.2bpp"
+
+; Bank 20 ($14) is called by label_394D in bank 0 - label_54AC is called there
+section "bank20",romx[$4000],bank[$14]
+include "code/bank20.asm"
 
 ; Bank 22 ($16) contains sprite data for overworld
 ; Starts on byte $3186, ends on byte $365D
