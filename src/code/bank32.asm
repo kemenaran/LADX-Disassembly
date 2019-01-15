@@ -3,6 +3,9 @@
 ; https://github.com/mattcurrie/mgbdis
 
 ; Data for sprite loading - 3 bytes per sprite ID
+; First 2 bytes - memory pointer
+; Third byte - bank ID
+; IE - db $DC, $59, $03 is for heart container. When loaded, code will jump to bank $03 - Pointer $59DC (LoadHeartContainer)
 ; Sprite ID table
 ; 30 - Golden Leaf
 ; 31 - Sword
