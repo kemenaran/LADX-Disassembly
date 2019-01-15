@@ -15,6 +15,11 @@ include "code/interrupts.asm"
 include "code/header.asm"
 
 ; Sources
+
+; Enable Debug Mode on rom, uncomment to enable
+section "EnableDebug", rom0[$0003]
+    db 01
+
 section "Main", rom0[$0150]
 include "code/bank0.asm"
 
@@ -26,6 +31,19 @@ include "code/bank2.asm"
 
 section "bank3",romx[$4000],bank[$03]
 include "code/bank3.asm"
+
+section "bank4",romx[$4000],bank[$04]
+include "code/bank4.asm"
+
+section "bank5",romx[$4000],bank[$05]
+include "code/bank5.asm"
+
+section "bank7",romx[$4000],bank[$07]
+include "code/bank7.asm"
+
+; Bank 9 starting on byte $200, ending on byte $268C
+; contains all the overworld collision data for first half of map
+; Tiles 0 - 7F
 
 section "bank12",romx[$4000],bank[$0C]
 incbin "gfx/characters/link_1.dmg.2bpp"
@@ -73,6 +91,23 @@ incbin "gfx/items/items_2.dmg.2bpp"
 
 section "bank19",romx[$4000],bank[$13]
 incbin "gfx/ending/ending.dmg.2bpp"
+
+; Bank 20 ($14) is called by label_394D in bank 0 - label_54AC is called there
+section "bank20",romx[$4000],bank[$14]
+include "code/bank20.asm"
+
+; Bank 22 ($16) contains sprite data for overworld
+; Starts on byte $5186, ends on byte $565D
+
+; Bank 26 ($1A) contains collision data for second half of overworld
+; This ends on byte $1E2A
+
+section "bank32",romx[$4000],bank[$20]
+include "code/bank32.asm"
+
+; Bank 37 ($25) and first quarter of 38 contains all the tilemap data for the overworld
+; Bank 37 contains $40 null bytes at end and ends on Map grid CB (0 in top left)
+; Bank 38 starts with map grid CC
 
 section "bank41",romx[$4000],bank[$29]
 incbin "gfx/photos/photo_nice_link.2bpp"

@@ -493,6 +493,15 @@ wD712 equ $D712
 ; Values:
 ;   0:     not discovered yet
 ;   non-0: various statuses
+
+; On overworld, tracks which
+; owl messages (and chests?)
+; have been received (opened)
+; Bitwise Values
+; 10000000 - Visited
+; 00100000 - Owl Received
+; 00010000 - Chest Opened
+; 00000100 - Door opened (dungeon entrance or bombable entrance
 wMinimapTiles:: ; D800
   ds $ff
 
@@ -564,7 +573,7 @@ wTradeSequenceItem:: ; DB0E
 wSeashellsCount:: ; DB0F
   ds 1
 
-; Unlabeled
+; Unlabeled - Spacing byte used to check for dungeon map during InventoryDisplayLoop
 wDB10 equ $DB10
   ds 1
 
@@ -586,8 +595,16 @@ wHasBirdKey:: ; DB14
 wGoldenLeavesCount:: ; DB15
   ds 1
 
-; Unlabeled
-wDB16 equ $DB16
+; Key counts for each dungeon
+wLevel1SmallKeys equ $DB1A
+wLevel2SmallKeys equ $DB1F
+wLevel3SmallKeys equ $DB24
+wLevel4SmallKeys equ $DB29
+wLevel5SmallKeys equ $DB2E
+wLevel6SmallKeys equ $DB33
+wLevel7SmallKeys equ $DB38
+wLevel8SmallKeys equ $DB3D
+wLevel9SmallKeys equ $DB42
   ds $2D
 
 wPowerBraceletLevel:: ; DB43
@@ -621,7 +638,15 @@ wIsBowWowFollowingLink:: ; DB56
 
 ; Unlabeled
 wDB57 equ $DB57
-  ds $6
+  ds $3
+
+wCurrentHealth equ $DB5A
+wMaxHearts equ $DB5B
+  ds $2
+
+; Unlabeled
+wDB5C equ $DB5C
+  ds $1
 
 wRupeeCountHigh:: ; DB5D
   ; Higher digits of the player rupees count
@@ -741,8 +766,8 @@ wWindowY:: ; DB9A
 wDB9B equ $DB9B
   ds $A
 
+; Used to check if currently in a dungeon
 wActiveRoom:: ; $DBA5
-  ; Current room?
   ds 1
 
 wSaveSlot:: ; DBA6
@@ -778,9 +803,13 @@ wHasDungeonStoneSlab:: ; DBCE
 wHasDungeonBossKey:: ; DBCF
   ds 1
 
+; Number small keys, current dungeon
+wNumSmallKeys: ; $DBD0
+  ds 1
+
 ; Unlabeled
-wDBD0 equ $DBD0
-  ds $3C
+wDBD1 equ $DBD1
+  ds $3B
 
 ; Photos 1-8 (bitfield)
 wPhotos1:: ; DC0C

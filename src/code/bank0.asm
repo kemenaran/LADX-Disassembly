@@ -2945,8 +2945,8 @@ ItemFunction::
     cp   $0B
     jp   z, UseShovel
     cp   $07 ; Magic wand
-    jr   nz, label_12ED
-    ld   hl, $C137
+    jr   nz, label_12ED ; Jump to use boots?
+    ld   hl, $C137 ; Start of magic wand use
     ld   a, [$C19B]
     or   [hl]
     jr   nz, label_12ED
@@ -5209,9 +5209,11 @@ label_214E::
     xor  a
     ld   [$C15F], a
     ret
-
-label_2153::
+;; Labels are off by 6 bytes in this area of the code
+label_2153:: ;; Actually 214D
     call label_2165
+
+label_000_2150::
     ld   a, $14
     ld   [MBC3SelectBank], a
     call label_50C3
@@ -5750,6 +5752,7 @@ include "src/code/home/clear_memory.asm"
 label_29ED::
     ld   a, $14
     ld   [MBC3SelectBank], a
+; Get the treasure chest info for current room
     call label_5884
     jp   ReloadSavedBank
 
@@ -7937,6 +7940,7 @@ label_38D4::
     ld   [MBC3SelectBank], a
     ret
 
+; Take the high hex from second byte of room data
 label_38EA::
     ld   e, a
     ld   a, $14
@@ -8001,6 +8005,7 @@ label_3942::
     call label_53E4
     jp   ReloadSavedBank
 
+; First call when loading Level 2 Boss
 label_394D::
     ld   a, $14
     ld   [MBC3SelectBank], a
@@ -8104,7 +8109,7 @@ label_39F2::
     ld   a, [hl]
     and  a
     jr   z, label_3A03
-    ldh  [$FFEA], a
+    ldh  [$FFEA], a ; Load new state for boss (at least for level 2, $01 equals dead? (actually, maybe just controls the color flicker while dying))
     call label_3A18
 
 label_3A03::
@@ -8181,6 +8186,7 @@ label_3A81::
     ld   [MBC3SelectBank], a
     ret
 
+; Load sprite code pointers and jump to execution
 label_3A8D::
     ld   a, $20
     ld   [MBC3SelectBank], a
@@ -8886,6 +8892,7 @@ label_3EDE::
 data_3EDF::
     db $B0, $B4, $B1, $B2, $B3, $B6, $BA, $BC, $B8
 
+; Second call when loading Level 2 Boss
 label_3EE8::
     ld   hl, wInventoryAppearing
     ld   a, [wMapSlideTransitionState]
