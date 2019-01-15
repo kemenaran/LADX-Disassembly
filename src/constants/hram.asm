@@ -122,7 +122,13 @@ hDialogBackgroundTile:: ; FFE8
 
 ; Store last hex of second byte of dungeon room data (default room tile)
 hFFE9:: ; FFE9
-  ds $A
+  ds 2
+
+hActiveSpriteId:: ; FFEB
+  ds 1
+
+hFFEC:: ; FFEC
+  ds 7
 
 hSFX:: ; FFF3
   ; plays sfx immediately

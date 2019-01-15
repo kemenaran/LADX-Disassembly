@@ -97,7 +97,7 @@ section "bank20",romx[$4000],bank[$14]
 include "code/bank20.asm"
 
 ; Bank 22 ($16) contains sprite data for overworld
-; Starts on byte $3186, ends on byte $365D
+; Starts on byte $5186, ends on byte $565D
 
 ; Bank 26 ($1A) contains collision data for second half of overworld
 ; This ends on byte $1E2A

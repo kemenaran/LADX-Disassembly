@@ -5209,9 +5209,11 @@ label_214E::
     xor  a
     ld   [$C15F], a
     ret
-
-label_2153::
+;; Labels are off by 6 bytes in this area of the code
+label_2153:: ;; Actually 214D
     call label_2165
+
+label_000_2150::
     ld   a, $14
     ld   [MBC3SelectBank], a
     call label_50C3
@@ -8184,6 +8186,7 @@ label_3A81::
     ld   [MBC3SelectBank], a
     ret
 
+; Load sprite code pointers and jump to execution
 label_3A8D::
     ld   a, $20
     ld   [MBC3SelectBank], a

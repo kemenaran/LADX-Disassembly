@@ -2177,7 +2177,7 @@ jr_014_50b2:
     ldh [rSCY], a
     jp Jump_014_5067
 
-
+call_014_50C3:
     ld e, $0f
     ld d, $00
 

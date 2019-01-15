@@ -2842,11 +2842,13 @@ label_D9D6::
 data_D9D8::
     db $AA, $14, $AA, $34
 
+; Loop run every frame heart container is on screen
 LoadHeartContainer:: ; 03:59DC
     ld   de, data_D9D8
     call label_3BC0
     call IsEntityFrameCounterZero
     jp   z, label_E0AA
+    ; Start of when item is picked up
     dec  a
     jr   nz, label_DA17
     ld   a, $18
@@ -3654,8 +3656,22 @@ label_DFC2::
 
 ; Data for loading secret seashell when bush is clipped (and when dug from ground) (at least first 2 bytes)
 data_DFD1::
-    db $9E, $14, $FA, $4E, $DB, $FE, 2, $D2, $8D, $3F, $F0, $F8, $E6, $10, $C2, $8D
-    db $3F, $F0, $F6, $FE, $E3, $20, 7, $F0, $F8, $E6, $40, $CA, $8D, $3F
+    db $9E, $14
+
+; Start of code for secret seashell
+label_003_5FD3::
+    ld a, [wDidFindSword]
+    cp $02
+    jp nc, label_3F8D
+    ldh [hFFF8]
+    and a, $10
+    jp nz, label_3F8D
+    ldh a, [hMapIndex]
+    cp a, $E3
+    jr nz, label_DFEF
+    ldh a, [hFFF8]
+    and a, $40
+    jp z, label_3F8D
 
 label_DFEF::
     call label_E1DE
