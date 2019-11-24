@@ -31,26 +31,26 @@ InterruptLCDStatus::
     ld   [rSVBK], a  ;
     ld   a, [wGameplayType]
     cp   GAMEPLAY_CREDITS ; if GameplayType != GAMEPLAY_CREDITS
-    jr   nz, skipScrollY
+    jr   nz, .skipScrollY
     ; GameplayType == CREDITS
     ld   a, [wGameplaySubtype]
     cp   $05 ; if GameplaySubtype != 5
-    jr   nz, setStandardScrollY
+    jr   nz, .setStandardScrollY
     ; GameplaySubtype == 5
     ld   a, [$D000]  ; override scrollY with WRA1:$D000 value
-    jr   setScrollY
+    jr   .setScrollY
 
-setStandardScrollY::
+.setStandardScrollY
     ; Set standard scrollY, without specific offset
     ldh  a, [hBaseScrollY]
 
-setScrollY::
+.setScrollY
     ld   [rSCY], a ; scrollY
-    jp   restoreSavedWRAMBankAndReturn
+    jp   .done
 
-skipScrollY::
+.skipScrollY
     cp   GAMEPLAY_INTRO    ; if not during the introduction sequence
-    jr   nz, clearScrollX  ;   skip
+    jr   nz, .clearScrollX  ;   skip
     ; GameplayType == INTRO
     ; Apply differential scrolling to each section:
     ; load and apply the scrollX offset for the current screen section being drawn
@@ -65,9 +65,9 @@ skipScrollY::
     ld   [rSCX], a        ; set scrollX
     ld   a, [wGameplaySubtype]
     cp   $06  ; if GameplaySubtype < 6 (intro sea)
-    jr   c, setupNextInterruptForIntroSea
-    ; If TransitionCounter >= 6 (intro beach)
-setupNextInterruptForIntroBeach::
+    jr   c, .setupNextInterruptForIntroSea
+    ; If TransitionCounter >= 6 (intro beach),
+    ; setup next interrupt for the beach sequence
     ld   hl, IntroBeachScreenSections
     add  hl, de        ; hl = ScreenSectionsTable + SectionIndex
     ld   a, [hl]       ;
@@ -76,9 +76,9 @@ setupNextInterruptForIntroBeach::
     inc  a             ;
     and  $03           ; a = a % 4
     ld   [wLCDSectionIndex], a ; save SectionIndex
-    jr   restoreSavedWRAMBankAndReturn
+    jr   .done
 
-setupNextInterruptForIntroSea::
+.setupNextInterruptForIntroSea
     ld   hl, IntroSeaScreenSections
     add  hl, de        ; hl = LCDScreenSectionsTable + SectionIndex
     ld   a, [hl]       ;
@@ -86,15 +86,15 @@ setupNextInterruptForIntroSea::
     ld   a, e          ; a = SectionIndex + 1
     inc  a             ;
     cp   $05           ; if SectionIndex != 5
-    jr   nz, skipResetSectionIndex ; skip
+    jr   nz, .skipResetSectionIndex ; skip
     ; If SectionIndex reached 5, reset it to 0
     xor  a             ; a = 0
 
-skipResetSectionIndex::
+.skipResetSectionIndex
     ld   [wLCDSectionIndex], a ; save SectionIndex
     nop
     cp   $04           ; if SectionIndex != 4
-    jr   nz, restoreSavedWRAMBankAndReturn ; skip
+    jr   nz, .done ; skip
     ; If we are drawing the last section (4)
     ld   a, [wIntroBGYOffset] ; Apply the Y offset to compensate for sea vertical movement
     ld   [rSCY], a               ; (so that the horizon position stays constant).
@@ -102,13 +102,14 @@ skipResetSectionIndex::
     inc  a             ;
     add  a, $60        ;
     ld   [rLYC], a     ; Fire LCD Y-compare interrupt when reaching the row for the next transition step
-    jr   restoreSavedWRAMBankAndReturn
+    jr   .done
 
-clearScrollX::
+.clearScrollX
     xor  a
     ld   [rSCX], a ; scrollX
 
-restoreSavedWRAMBankAndReturn::
+.done
+    ; Restore banks and register
     ld   a, c
     ld   [rSVBK], a
     pop  bc
@@ -138,7 +139,7 @@ InterruptSerial::
 LoadMapData::
     ld   a, [wTileMapToLoad]
     and  a
-    jr   z, .LoadMapZero
+    jr   z, .LoadTileMapZero
 
     ; Copy tile map number to the palette-loading variable
     ld   [wPaletteToLoadForTileMap], a
@@ -151,17 +152,17 @@ LoadMapData::
     pop  af
 .LCDOffEnd
 
-    call .ExecuteMapLoadHandler
-    jr   .ClearValuesAndReturn
+    call .executeMapLoadHandler
+    jr   .clearFlagsAndReturn
 
-.ExecuteMapLoadHandler:
+.executeMapLoadHandler
     ld   e, a
     callsb GetTilemapHandlerAddress
     ; Jump to the tilemap loading handler
     jp   hl ; tail-call
 
     ; Special case for loading map n° 0
-.LoadMapZero:
+.LoadTileMapZero
     call LCDOff
     callsb LoadBGMapAttributes
 
@@ -176,13 +177,13 @@ LoadMapData::
     call AdjustBankNumberForGBC
     ld   [MBC3SelectBank], a
 
-.ClearValuesAndReturn:
+.clearFlagsAndReturn
     xor  a
     ld   [wBGMapToLoad], a
     ld   [wTileMapToLoad], a
     ld   a, [wLCDControl]
     ld   [rLCDC], a
-.return:
+.return
     ret
 
 data_046A::
@@ -200,7 +201,7 @@ InterruptVBlank::
     push de
     push hl
 
-    ; Adjust loaded bank
+    ; Ensure the RAM bank is in a valid range
     ld   a, [rSVBK]
     and  $07
     ld   c, a
@@ -277,11 +278,11 @@ vBlankContinue::
     ; GameplayType is one of the Pictures
     ld   a, [wGameplaySubtype]
     cp   $06
-    jr   c, label_52B
+    jr   c, .animateTilesEnd
     ld   a, $38
     ld   [MBC3SelectBank], a
     call $785A
-    jr   label_52B
+    jr   .animateTilesEnd
 .gameplayNotAPhoto
 
     ;
@@ -301,7 +302,7 @@ vBlankContinue::
     jr   z, .noTilesToUpdate
 
     ; Load tiles (?)
-    call label_5BC
+    call LoadTiles
 
     ; If $FFE8 >= 8, skip drawing of Link sprite
     ldh  a, [$FFE8]
@@ -317,6 +318,9 @@ vBlankContinue::
     jr   WaitForVBlankAndReturn
 
 .noTilesToUpdate
+    ; Otherwise, when there are not tiles to update, we can perform a bit
+    ; more GFX code – like animating the tiles and palettes.
+
     ; If $FFBB == 0, move on
     ldh  a, [$FFBB]
     and  a
@@ -342,10 +346,10 @@ vBlankContinue::
     ; If GameplayType != PHOTO_ALBUM, animate tiles
     ld   a, [wGameplayType]
     cp   GAMEPLAY_PHOTO_ALBUM
-    jr   z, label_52B
+    jr   z, .animateTilesEnd
     call AnimateTiles
+.animateTilesEnd
 
-label_52B::
     ldh  a, [hIsGBC]
     and  a
     jr   z, .notGBC
@@ -425,29 +429,37 @@ label_5AB::
     ld   [MBC3SelectBank], a
     jr   WaitForVBlankAndReturn_direct
 
-; Copy tiles?
-label_5BC::
+; Execute tile-loading commands for BG tiles, enemy tiles and NPC tiles
+LoadTiles::
+    ;
+    ; Execute BG Tiles command
+    ;
+
+    ; If there are no BG tiles to load, move to the OAM tiles.
     ldh  a, [hNeedsUpdatingBGTiles]
     and  a
-    jp   z, label_69E
+    jp   z, LoadOAMTiles
+
     cp   $07
     jp   z, label_7B0
     cp   $03
-    jp   z, $0062
+    jp   z, Copy6900ToTileMemory89A0
     cp   $04
-    jp   z, $006A
+    jp   z, Copy6930ToTileMemory89D0
     cp   $05
-    jp   z, $0072
+    jp   z, Copy49D0ToTileMemory89D0
     cp   $06
-    jp   z, $007A
+    jp   z, Copy49A0ToTileMemory89A0
     cp   $08
     jp   nc, label_7D3
+
     ld   a, [wIsIndoor]
     and  a
-    jp   z, label_656
+    jp   z, LoadOverworldBGTiles
     ldh  a, [hNeedsUpdatingBGTiles]
     cp   $02
     jp   z, LoadDungeonMinimapTiles
+
     ld   a, $0D
     call AdjustBankNumberForGBC
     ld   [MBC3SelectBank], a
@@ -471,46 +483,48 @@ label_5BC::
     ld   e, l
     ld   d, h
     ld   hl, $5000
+
     ldh  a, [hMapId]
     cp   MAP_COLOR_DUNGEON
-    jr   nz, label_62F
+    jr   nz, .colorDungeonEnd
     ld   a, $20
     ld   [MBC3SelectBank], a
     call $4616
     ld   [MBC3SelectBank], a
-    jr   label_641
+    jr   .copyData
+.colorDungeonEnd
 
-label_62F::
     ldh  a, [$FF94]
     add  a, $50
     ld   h, a
     add  hl, bc
+
     ldh  a, [$FFBB]
     and  a
-    jr   z, label_641
+    jr   z, .copyData
     ldh  a, [hBGTilesLoadingStage]
     dec  a
     cp   $02
-    jr   c, label_647
+    jr   c, .incrementBGTileLoadingStage
+.copyData
 
-label_641::
     ld   bc, $0040
     call CopyData
 
-label_647::
+.incrementBGTileLoadingStage
     ldh  a, [hBGTilesLoadingStage]
     inc  a
     ldh  [hBGTilesLoadingStage], a
     cp   $04
-    jr   nz, label_655
+    jr   nz, .return
     xor  a
     ldh  [hNeedsUpdatingBGTiles], a
     ldh  [hBGTilesLoadingStage], a
 
-label_655::
+.return
     ret
 
-label_656::
+LoadOverworldBGTiles::
     ld   a, $0F
     call AdjustBankNumberForGBC
     ld   [MBC3SelectBank], a
@@ -540,19 +554,21 @@ label_656::
     add  hl, bc
     ld   bc, $0040
     call CopyData
+
+    ; Increment the loading stage
     ldh  a, [hBGTilesLoadingStage]
     inc  a
     ldh  [hBGTilesLoadingStage], a
+    ; If the loading stage >= $08, we're done
     cp   $08
-    jr   nz, label_69D
+    jr   nz, .return
     xor  a
     ldh  [hNeedsUpdatingBGTiles], a
     ldh  [hBGTilesLoadingStage], a
-
-label_69D::
+.return
     ret
 
-label_69E::
+LoadOAMTiles::
     ; If on GBC and inside the Color Dungeon…
     ldh  a, [hIsGBC]
     and  a
@@ -572,8 +588,12 @@ label_69E::
     ld   b, h
     ld   h, $00
     call Copy100BytesFromBankAtA
-    jr   label_738
+    jr   .clearEnemiesTilesLoadCommand
 .colorDungeonEnd
+
+    ;
+    ; Execute Enemies Tiles command
+    ;
 
     ldh  a, [hNeedsUpdatingEnnemiesTiles]
     and  a
@@ -599,10 +619,10 @@ label_69E::
     add  hl, bc
     ld   a, [hl]
     and  a
-    jr   z, label_6F7
+    jr   z, .adjustBankEnd
     call AdjustBankNumberForGBC
+.adjustBankEnd
 
-label_6F7::
     ld   [MBC3SelectBank], a
     ldh  a, [hEnemiesTilesLoadingStage]
     ld   c, a
@@ -633,18 +653,21 @@ label_6F7::
     pop  hl
     ld   bc, $0040
     call CopyData
+
+    ; Increment the enemies tiles loading stage
     ldh  a, [hEnemiesTilesLoadingStage]
     inc  a
     ldh  [hEnemiesTilesLoadingStage], a
+    ; If the loading stage is >= $04, we're done
     cp   $04
-    jr   nz, label_73D
+    jr   nz, .return
 
-label_738::
+.clearEnemiesTilesLoadCommand
     xor  a
     ldh  [hNeedsUpdatingEnnemiesTiles], a
     ldh  [hEnemiesTilesLoadingStage], a
 
-label_73D::
+.return
     ret
 
 label_73E::
@@ -669,10 +692,10 @@ label_73E::
     add  hl, bc
     ld   a, [hl]
     and  a
-    jr   z, label_764
+    jr   z, .jp_0764
     call AdjustBankNumberForGBC
+.jp_0764
 
-label_764::
     ld   [MBC3SelectBank], a
     ld   a, [$C10F]
     ld   c, a
@@ -707,17 +730,16 @@ label_764::
     inc  a
     ld   [$C10F], a
     cp   $04
-    jr   nz, label_7AF
+    jr   nz, .return
     xor  a
     ld   [wNeedsUpdatingNPCTiles], a
     ld   [$C10F], a
-
-label_7AF::
+.return
     ret
 
 label_7B0::
     callsb func_001_6BB5
-    jp   $008B
+    jp   Copy48BytesAndClearFlags.restoreBank0C
 
 data_07BB::
     db   $60, $69, $A0, $69, $C0, $69, 0, $42, $40, $42, $60, $42
